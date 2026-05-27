@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pesanan Saya — PasarLokal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../assets/css/custom.css" />
+  <script>
+    tailwind.config = {
+      theme: { extend: { colors: {
+        primary: { DEFAULT: '#16a34a', dark: '#15803d', light: '#dcfce7' },
+        accent:  { DEFAULT: '#f97316', dark: '#ea580c' }
+      }}}
+    }
+  </script>
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+
+  <div id="navbar"></div>
+
+  <div class="bg-white border-b border-gray-100">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <h1 class="text-2xl font-extrabold text-gray-900">Pesanan Saya</h1>
+      <p class="text-sm text-gray-500 mt-1">Pantau status pesanan dan riwayat transaksimu</p>
+    </div>
+  </div>
+
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Status filter tabs -->
+    <div class="flex gap-2 overflow-x-auto pb-2 mb-6">
+      <button data-status="" class="status-tab flex-shrink-0 bg-green-600 text-white text-sm font-semibold px-5 py-2 rounded-full transition-colors">Semua</button>
+      <button data-status="pending" class="status-tab flex-shrink-0 bg-white border border-gray-200 text-gray-600 text-sm font-semibold px-5 py-2 rounded-full transition-colors hover:border-green-400">Menunggu Bayar</button>
+      <button data-status="paid" class="status-tab flex-shrink-0 bg-white border border-gray-200 text-gray-600 text-sm font-semibold px-5 py-2 rounded-full transition-colors hover:border-green-400">Dibayar</button>
+      <button data-status="shipped" class="status-tab flex-shrink-0 bg-white border border-gray-200 text-gray-600 text-sm font-semibold px-5 py-2 rounded-full transition-colors hover:border-green-400">Dikirim</button>
+      <button data-status="done" class="status-tab flex-shrink-0 bg-white border border-gray-200 text-gray-600 text-sm font-semibold px-5 py-2 rounded-full transition-colors hover:border-green-400">Selesai</button>
+      <button data-status="cancelled" class="status-tab flex-shrink-0 bg-white border border-gray-200 text-gray-600 text-sm font-semibold px-5 py-2 rounded-full transition-colors hover:border-green-400">Dibatalkan</button>
+    </div>
+
+    <!-- Loading -->
+    <div id="orders-loading" class="flex flex-col items-center py-24 gap-3 text-gray-400">
+      <div class="w-10 h-10 border-4 border-green-600 border-t-transparent rounded-full animate-spin"></div>
+      <p class="text-sm">Memuat pesanan...</p>
+    </div>
+
+    <!-- Empty -->
+    <div id="orders-empty" class="hidden flex flex-col items-center py-32 gap-4 text-gray-400">
+      <span class="text-7xl">📦</span>
+      <p class="text-xl font-bold text-gray-600">Belum ada pesanan</p>
+      <p class="text-sm">Yuk, belanja produk UMKM favoritmu!</p>
+      <a href="catalog.html" class="mt-2 bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 rounded-xl transition-colors">
+        Mulai Belanja
+      </a>
+    </div>
+
+    <!-- Orders list -->
+    <div id="orders-list" class="hidden space-y-4"></div>
+  </div>
+
+  <!-- Detail Modal -->
+  <div id="modal-detail" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" id="modal-backdrop"></div>
+    <div class="relative bg-white rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+      <div class="sticky top-0 bg-white rounded-t-3xl border-b border-gray-100 px-6 py-4 flex items-center justify-between">
+        <h2 class="font-bold text-gray-900 text-lg">Detail Pesanan</h2>
+        <button id="modal-close"
+          class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div id="modal-body" class="p-6 space-y-5"></div>
+    </div>
+  </div>
+
+  <div id="footer"></div>
+
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script>
+    utils.injectNavbar('orders');
+    utils.injectFooter();
+    auth.requireAuth(['buyer', 'admin']);
+
+    const DEMO_EMOJIS = { makanan:'🍱', kerajinan:'👜', fashion:'👗', elektronik:'📱', pertanian:'🌿', lainnya:'🎁' };
+
+    const DEMO_ORDERS = [
+      {
+        id: 'ORD-001',
+        status: 'shipped',
+        created_at: '2024-11-10T10:30:00Z',
+        total_price: 210000,
+        shipping_cost: 15000,
+        shipping_address: 'Jl. Raya No. 10, Surabaya',
+        shipping_city: 'Surabaya',
+        courier: 'jne-REG',
+        seller: { name: 'Dapur Bu Sari' },
+        items: [
+          { quantity:2, price:45000, product:{ name:'Kue Nastar Spesial', category:'makanan', image_url:null } },
+          { quantity:1, price:120000, product:{ name:'Tas Anyaman Bambu', category:'kerajinan', image_url:null } },
+        ],
+        payment: { status:'success', payment_method:'bank_transfer' }
+      },
+      {
+        id: 'ORD-002',
+        status: 'pending',
+        created_at: '2024-11-12T14:00:00Z',
+        total_price: 110000,
+        shipping_cost: 10000,
+        shipping_address: 'Jl. Merdeka No. 5, Malang',
+        shipping_city: 'Malang',
+        courier: 'jnt-REG',
+        seller: { name: 'Kebun Sehat' },
+        items: [
+          { quantity:3, price:35000, product:{ name:'Teh Herbal Organik', category:'pertanian', image_url:null } },
+        ],
+        payment: { status:'pending', payment_method:null }
+      },
+      {
+        id: 'ORD-003',
+        status: 'done',
+        created_at: '2024-10-28T09:15:00Z',
+        total_price: 300000,
+        shipping_cost: 15000,
+        shipping_address: 'Jl. Diponegoro No. 2, Jakarta',
+        shipping_city: 'Jakarta',
+        courier: 'jne-YES',
+        seller: { name: 'Batik Putri' },
+        items: [
+          { quantity:1, price:285000, product:{ name:'Batik Tulis Solo', category:'fashion', image_url:null } },
+        ],
+        payment: { status:'success', payment_method:'gopay' }
+      },
+    ];
+
+    let allOrders = [];
+    let activeStatus = '';
+
+    async function loadOrders() {
+      try {
+        const res = await api.get('/orders');
+        allOrders = res.data || [];
+        if (!allOrders.length) allOrders = DEMO_ORDERS;
+      } catch (_) {
+        allOrders = DEMO_ORDERS;
+      }
+      renderOrders();
+    }
+
+    function renderOrders() {
+      document.getElementById('orders-loading').classList.add('hidden');
+
+      const filtered = activeStatus
+        ? allOrders.filter(o => o.status === activeStatus)
+        : allOrders;
+
+      if (!filtered.length) {
+        document.getElementById('orders-list').classList.add('hidden');
+        document.getElementById('orders-empty').classList.remove('hidden');
+        return;
+      }
+
+      document.getElementById('orders-empty').classList.add('hidden');
+      document.getElementById('orders-list').classList.remove('hidden');
+
+      document.getElementById('orders-list').innerHTML = filtered.map(order => {
+        const items = order.items || [];
+        const firstItem = items[0];
+        const moreCount = items.length - 1;
+
+        return `
+          <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+            <!-- Header -->
+            <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-gray-50/50">
+              <div class="flex items-center gap-2 text-sm text-gray-500">
+                <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                </svg>
+                <span class="font-semibold text-gray-700">No. ${order.id}</span>
+                <span class="text-gray-300">•</span>
+                <span>${utils.formatDateShort(order.created_at)}</span>
+              </div>
+              ${utils.getStatusBadge(order.status)}
+            </div>
+
+            <!-- Body -->
+            <div class="p-5">
+              <div class="flex items-start gap-4">
+                <!-- Product image -->
+                <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center flex-shrink-0 text-3xl">
+                  ${firstItem?.product?.image_url
+                    ? `<img src="${utils.getProductImageUrl(firstItem.product.image_url)}" class="w-full h-full object-cover rounded-xl">`
+                    : DEMO_EMOJIS[firstItem?.product?.category] || '📦'
+                  }
+                </div>
+
+                <!-- Info -->
+                <div class="flex-1 min-w-0">
+                  <p class="font-semibold text-gray-900 truncate">${firstItem?.product?.name || '-'}</p>
+                  ${moreCount > 0 ? `<p class="text-xs text-gray-400 mt-0.5">+${moreCount} produk lainnya</p>` : ''}
+                  <p class="text-xs text-gray-400 mt-0.5">Dari: ${order.seller?.name || 'UMKM Lokal'}</p>
+                  <p class="text-xs text-gray-400">Kurir: ${(order.courier || 'JNE REG').toUpperCase()}</p>
+                </div>
+
+                <!-- Total -->
+                <div class="text-right flex-shrink-0">
+                  <p class="text-xs text-gray-400">Total</p>
+                  <p class="font-bold text-green-600">${utils.formatRupiah(order.total_price)}</p>
+                </div>
+              </div>
+
+              <!-- Progress tracker for active orders -->
+              ${order.status !== 'cancelled' ? renderProgressBar(order.status) : ''}
+
+              <!-- Actions -->
+              <div class="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100">
+                <button onclick="openDetail('${order.id}')"
+                  class="flex-1 py-2 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+                  Lihat Detail
+                </button>
+                ${order.status === 'pending' && order.payment?.status === 'pending'
+                  ? `<button onclick="retryPayment('${order.id}')"
+                       class="flex-1 py-2 bg-orange-500 hover:bg-orange-600 rounded-xl text-sm font-semibold text-white transition-colors">
+                       Bayar Sekarang
+                     </button>`
+                  : order.status === 'done'
+                  ? `<button class="flex-1 py-2 bg-green-50 border border-green-200 rounded-xl text-sm font-semibold text-green-700 hover:bg-green-100 transition-colors">
+                       Beli Lagi
+                     </button>`
+                  : ''
+                }
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderProgressBar(status) {
+      const steps = ['pending','paid','shipped','done'];
+      const labels = ['Menunggu Bayar','Diproses','Dikirim','Selesai'];
+      const currentIdx = steps.indexOf(status);
+
+      return `
+        <div class="mt-4 px-1">
+          <div class="relative flex items-center justify-between">
+            <!-- Track line -->
+            <div class="absolute top-3.5 left-0 right-0 h-0.5 bg-gray-200 z-0">
+              <div class="h-full bg-green-500 transition-all duration-500"
+                   style="width: ${currentIdx === -1 ? 0 : (currentIdx / (steps.length - 1)) * 100}%"></div>
+            </div>
+            ${steps.map((s, i) => {
+              const done = i <= currentIdx;
+              return `
+                <div class="flex flex-col items-center gap-1 z-10">
+                  <div class="w-7 h-7 rounded-full border-2 flex items-center justify-center transition-colors ${
+                    done ? 'bg-green-600 border-green-600 text-white' : 'bg-white border-gray-300 text-gray-300'
+                  }">
+                    ${done ? '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>'
+                           : `<span class="text-xs font-bold">${i+1}</span>`}
+                  </div>
+                  <span class="text-xs ${done ? 'text-green-600 font-semibold' : 'text-gray-400'} text-center w-16 leading-tight">${labels[i]}</span>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    // Status tabs
+    document.querySelectorAll('.status-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        activeStatus = tab.dataset.status;
+        document.querySelectorAll('.status-tab').forEach(t => {
+          const active = t.dataset.status === activeStatus;
+          t.className = `status-tab flex-shrink-0 text-sm font-semibold px-5 py-2 rounded-full transition-colors ${
+            active ? 'bg-green-600 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:border-green-400'
+          }`;
+        });
+        renderOrders();
+      });
+    });
+
+    // Detail modal
+    function openDetail(orderId) {
+      const order = allOrders.find(o => String(o.id) === String(orderId));
+      if (!order) return;
+
+      document.getElementById('modal-body').innerHTML = `
+        <div class="space-y-5">
+          <!-- Status -->
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-xs text-gray-400">Nomor Pesanan</p>
+              <p class="font-bold text-gray-900">${order.id}</p>
+            </div>
+            ${utils.getStatusBadge(order.status)}
+          </div>
+
+          <!-- Items -->
+          <div>
+            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Produk</p>
+            <div class="space-y-2">
+              ${(order.items || []).map(item => `
+                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                  <span class="text-2xl">${DEMO_EMOJIS[item.product?.category]||'📦'}</span>
+                  <div class="flex-1">
+                    <p class="text-sm font-semibold text-gray-900">${item.product?.name || '-'}</p>
+                    <p class="text-xs text-gray-400">x${item.quantity} × ${utils.formatRupiah(item.price)}</p>
+                  </div>
+                  <span class="text-sm font-bold text-gray-900">${utils.formatRupiah(item.price * item.quantity)}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
+          <!-- Shipping -->
+          <div class="bg-gray-50 rounded-xl p-4 space-y-2">
+            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Info Pengiriman</p>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-500">Alamat</span>
+              <span class="font-medium text-gray-900 text-right max-w-[60%]">${order.shipping_address}, ${order.shipping_city}</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-500">Kurir</span>
+              <span class="font-medium text-gray-900">${(order.courier||'JNE REG').toUpperCase()}</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-500">Ongkir</span>
+              <span class="font-medium text-gray-900">${utils.formatRupiah(order.shipping_cost || 0)}</span>
+            </div>
+          </div>
+
+          <!-- Payment -->
+          <div class="bg-gray-50 rounded-xl p-4 space-y-2">
+            <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Rincian Pembayaran</p>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-500">Subtotal produk</span>
+              <span class="font-medium text-gray-900">${utils.formatRupiah(order.total_price - (order.shipping_cost||0))}</span>
+            </div>
+            <div class="flex justify-between text-sm">
+              <span class="text-gray-500">Ongkos kirim</span>
+              <span class="font-medium text-gray-900">${utils.formatRupiah(order.shipping_cost || 0)}</span>
+            </div>
+            <div class="flex justify-between text-sm font-bold border-t border-gray-200 pt-2 mt-1">
+              <span class="text-gray-900">Total</span>
+              <span class="text-green-600 text-base">${utils.formatRupiah(order.total_price)}</span>
+            </div>
+          </div>
+
+          <div class="flex justify-between text-sm text-gray-500">
+            <span>Tanggal pesanan</span>
+            <span>${utils.formatDate(order.created_at)}</span>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('modal-detail').classList.remove('hidden');
+    }
+
+    document.getElementById('modal-close').addEventListener('click', () => {
+      document.getElementById('modal-detail').classList.add('hidden');
+    });
+    document.getElementById('modal-backdrop').addEventListener('click', () => {
+      document.getElementById('modal-detail').classList.add('hidden');
+    });
+
+    async function retryPayment(orderId) {
+      try {
+        const res = await api.post(`/payment/${orderId}`, {});
+        if (res.success && res.data?.snap_token && typeof snap !== 'undefined') {
+          snap.pay(res.data.snap_token, {
+            onSuccess: () => { utils.showToast('Pembayaran berhasil! 🎉', 'success'); loadOrders(); },
+            onPending: () => utils.showToast('Menunggu konfirmasi pembayaran...', 'info'),
+            onError: () => utils.showToast('Pembayaran gagal. Coba lagi.', 'error'),
+          });
+        }
+      } catch (_) {
+        utils.showToast('Gagal membuka halaman pembayaran', 'error');
+      }
+    }
+
+    loadOrders();
+  </script>
+</body>
+</html>

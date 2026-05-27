@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pesanan Masuk — PasarLokal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../assets/css/custom.css" />
+  <script>
+    tailwind.config = {
+      theme: { extend: { colors: {
+        primary: { DEFAULT: '#16a34a', dark: '#15803d', light: '#dcfce7' },
+        accent:  { DEFAULT: '#f97316', dark: '#ea580c' }
+      }}}
+    }
+  </script>
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+
+  <div id="navbar"></div>
+
+  <div class="bg-white border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-extrabold text-gray-900">Pesanan Masuk</h1>
+        <p class="text-sm text-gray-500 mt-0.5">Kelola dan update status pesanan dari pembeli</p>
+      </div>
+      <!-- Summary chips -->
+      <div class="hidden sm:flex items-center gap-3">
+        <div id="chip-pending" class="flex items-center gap-1.5 bg-yellow-50 border border-yellow-200 text-yellow-700 text-xs font-semibold px-3 py-1.5 rounded-full">
+          <span class="w-1.5 h-1.5 bg-yellow-500 rounded-full pulse-dot"></span>
+          <span id="count-pending">0</span> Baru
+        </div>
+        <div class="flex items-center gap-1.5 bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold px-3 py-1.5 rounded-full">
+          <span id="count-paid">0</span> Dibayar
+        </div>
+        <div class="flex items-center gap-1.5 bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-semibold px-3 py-1.5 rounded-full">
+          <span id="count-shipped">0</span> Dikirim
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+    <!-- Toolbar -->
+    <div class="flex flex-col sm:flex-row gap-3 mb-6">
+      <!-- Status tabs -->
+      <div class="flex gap-2 overflow-x-auto flex-1">
+        <button data-status="" class="status-tab flex-shrink-0 bg-green-600 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-colors">Semua</button>
+        <button data-status="pending" class="status-tab flex-shrink-0 bg-white border border-gray-200 text-gray-600 text-sm font-semibold px-4 py-2 rounded-xl transition-colors hover:border-yellow-400">Menunggu</button>
+        <button data-status="paid" class="status-tab flex-shrink-0 bg-white border border-gray-200 text-gray-600 text-sm font-semibold px-4 py-2 rounded-xl transition-colors hover:border-blue-400">Dibayar</button>
+        <button data-status="shipped" class="status-tab flex-shrink-0 bg-white border border-gray-200 text-gray-600 text-sm font-semibold px-4 py-2 rounded-xl transition-colors hover:border-indigo-400">Dikirim</button>
+        <button data-status="done" class="status-tab flex-shrink-0 bg-white border border-gray-200 text-gray-600 text-sm font-semibold px-4 py-2 rounded-xl transition-colors hover:border-green-400">Selesai</button>
+        <button data-status="cancelled" class="status-tab flex-shrink-0 bg-white border border-gray-200 text-gray-600 text-sm font-semibold px-4 py-2 rounded-xl transition-colors hover:border-red-400">Batal</button>
+      </div>
+      <!-- Search -->
+      <div class="relative sm:w-64 flex-shrink-0">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <input id="search-order" type="text" placeholder="Cari pembeli / no. order..."
+          class="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:border-green-500 transition-colors" />
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div id="orders-loading" class="space-y-3">
+      <div class="bg-white rounded-2xl h-28 animate-pulse border border-gray-100"></div>
+      <div class="bg-white rounded-2xl h-28 animate-pulse border border-gray-100"></div>
+      <div class="bg-white rounded-2xl h-28 animate-pulse border border-gray-100"></div>
+    </div>
+
+    <!-- Empty -->
+    <div id="orders-empty" class="hidden flex flex-col items-center py-32 gap-4 text-gray-400">
+      <span class="text-7xl">📋</span>
+      <p class="text-xl font-bold text-gray-600">Belum ada pesanan</p>
+      <p class="text-sm">Pesanan dari pembeli akan muncul di sini</p>
+    </div>
+
+    <!-- Orders list -->
+    <div id="orders-list" class="hidden space-y-3"></div>
+  </div>
+
+  <!-- ===== UPDATE STATUS MODAL ===== -->
+  <div id="modal-status" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" id="modal-backdrop"></div>
+    <div class="relative bg-white rounded-3xl shadow-2xl max-w-md w-full">
+      <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <h2 class="font-bold text-gray-900">Update Status Pesanan</h2>
+        <button id="modal-close"
+          class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div class="p-6 space-y-5">
+        <div id="modal-order-info" class="bg-gray-50 rounded-2xl p-4"></div>
+
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Pilih Status Baru</label>
+          <div id="status-options" class="space-y-2"></div>
+        </div>
+
+        <div id="resi-field" class="hidden">
+          <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Nomor Resi <span class="text-red-500">*</span></label>
+          <input type="text" id="resi-input" placeholder="Masukkan nomor resi pengiriman"
+            class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-green-500 transition-colors" />
+        </div>
+
+        <div class="flex gap-3">
+          <button id="modal-cancel"
+            class="flex-1 py-3 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+            Batal
+          </button>
+          <button id="modal-confirm"
+            class="flex-1 py-3 bg-green-600 hover:bg-green-700 rounded-xl text-sm font-semibold text-white transition-colors flex items-center justify-center gap-2">
+            <span id="confirm-text">Update Status</span>
+            <svg id="confirm-spinner" class="hidden w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== DETAIL MODAL ===== -->
+  <div id="modal-detail" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" id="detail-backdrop"></div>
+    <div class="relative bg-white rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+      <div class="sticky top-0 bg-white rounded-t-3xl border-b border-gray-100 px-6 py-4 flex items-center justify-between">
+        <h2 class="font-bold text-gray-900 text-lg">Detail Pesanan</h2>
+        <button id="detail-close"
+          class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+      <div id="detail-body" class="p-6 space-y-5"></div>
+    </div>
+  </div>
+
+  <div id="footer"></div>
+
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script>
+    utils.injectNavbar('orders');
+    utils.injectFooter();
+    auth.requireAuth(['seller', 'admin']);
+
+    const DEMO_EMOJIS = { makanan:'🍱', kerajinan:'👜', fashion:'👗', elektronik:'📱', pertanian:'🌿', lainnya:'🎁' };
+
+    const DEMO_ORDERS = [
+      {
+        id:'ORD-038', status:'paid', created_at:'2024-11-12T14:00:00Z',
+        total_price:210000, shipping_cost:15000,
+        shipping_address:'Jl. Raya No. 10', shipping_city:'Surabaya', courier:'jne-REG',
+        buyer:{ name:'Budi Santoso', phone:'081234567890', email:'budi@email.com' },
+        items:[
+          { quantity:2, price:45000, product:{ name:'Kue Nastar Spesial', category:'makanan' } },
+          { quantity:1, price:120000, product:{ name:'Tas Anyaman Bambu', category:'kerajinan' } },
+        ]
+      },
+      {
+        id:'ORD-037', status:'shipped', created_at:'2024-11-11T09:30:00Z',
+        total_price:85000, shipping_cost:10000,
+        shipping_address:'Jl. Merdeka No. 5', shipping_city:'Malang', courier:'jnt-REG',
+        buyer:{ name:'Dewi Rahayu', phone:'082345678901', email:'dewi@email.com' },
+        items:[
+          { quantity:2, price:35000, product:{ name:'Teh Herbal Organik', category:'pertanian' } },
+        ]
+      },
+      {
+        id:'ORD-036', status:'done', created_at:'2024-11-10T16:45:00Z',
+        total_price:320000, shipping_cost:35000,
+        shipping_address:'Jl. Diponegoro No. 2', shipping_city:'Jakarta', courier:'jne-YES',
+        buyer:{ name:'Andi Kurnia', phone:'083456789012', email:'andi@email.com' },
+        items:[
+          { quantity:1, price:285000, product:{ name:'Batik Tulis Solo', category:'fashion' } },
+        ]
+      },
+      {
+        id:'ORD-035', status:'pending', created_at:'2024-11-09T11:00:00Z',
+        total_price:55000, shipping_cost:10000,
+        shipping_address:'Jl. Sudirman No. 88', shipping_city:'Bandung', courier:'pos-REG',
+        buyer:{ name:'Siti Aminah', phone:'084567890123', email:'siti@email.com' },
+        items:[
+          { quantity:1, price:45000, product:{ name:'Kue Nastar Spesial', category:'makanan' } },
+        ]
+      },
+      {
+        id:'ORD-034', status:'cancelled', created_at:'2024-11-08T08:20:00Z',
+        total_price:145000, shipping_cost:15000,
+        shipping_address:'Jl. Ahmad Yani No. 3', shipping_city:'Surabaya', courier:'jne-REG',
+        buyer:{ name:'Rudi Hartono', phone:'085678901234', email:'rudi@email.com' },
+        items:[
+          { quantity:1, price:120000, product:{ name:'Gerabah Dekoratif', category:'kerajinan' } },
+        ]
+      },
+    ];
+
+    let allOrders = [];
+    let activeStatus = '';
+    let searchQuery = '';
+    let pendingUpdateId = null;
+    let pendingNewStatus = null;
+
+    async function loadOrders() {
+      try {
+        const res = await api.get('/seller/orders');
+        allOrders = res.data?.data || res.data || [];
+        if (!allOrders.length) allOrders = DEMO_ORDERS;
+      } catch (_) {
+        allOrders = DEMO_ORDERS;
+      }
+      updateCountChips();
+      renderOrders();
+    }
+
+    function updateCountChips() {
+      document.getElementById('count-pending').textContent  = allOrders.filter(o => o.status==='pending').length;
+      document.getElementById('count-paid').textContent     = allOrders.filter(o => o.status==='paid').length;
+      document.getElementById('count-shipped').textContent  = allOrders.filter(o => o.status==='shipped').length;
+    }
+
+    function renderOrders() {
+      document.getElementById('orders-loading').classList.add('hidden');
+
+      let list = allOrders;
+      if (activeStatus) list = list.filter(o => o.status === activeStatus);
+      if (searchQuery)  list = list.filter(o =>
+        String(o.id).toLowerCase().includes(searchQuery) ||
+        (o.buyer?.name || '').toLowerCase().includes(searchQuery)
+      );
+
+      if (!list.length) {
+        document.getElementById('orders-list').classList.add('hidden');
+        document.getElementById('orders-empty').classList.remove('hidden');
+        return;
+      }
+
+      document.getElementById('orders-empty').classList.add('hidden');
+      document.getElementById('orders-list').classList.remove('hidden');
+
+      document.getElementById('orders-list').innerHTML = list.map(order => {
+        const items = order.items || [];
+        const firstItem = items[0];
+        const moreCount = items.length - 1;
+        const canUpdate = ['paid', 'shipped'].includes(order.status);
+        const nextLabel = order.status === 'paid' ? 'Proses & Kirim' : order.status === 'shipped' ? 'Tandai Selesai' : null;
+        const nextStatus = order.status === 'paid' ? 'shipped' : order.status === 'shipped' ? 'done' : null;
+
+        return `
+          <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow">
+            <!-- Header -->
+            <div class="flex items-center justify-between px-5 py-3.5 bg-gray-50/60 border-b border-gray-100">
+              <div class="flex items-center gap-3 min-w-0">
+                <span class="font-bold text-green-700 text-sm flex-shrink-0">${order.id}</span>
+                <span class="text-gray-300 hidden sm:inline">•</span>
+                <span class="text-sm text-gray-500 hidden sm:inline truncate">${order.buyer?.name || '-'}</span>
+                <span class="text-gray-300 hidden md:inline">•</span>
+                <span class="text-xs text-gray-400 hidden md:inline">${utils.formatDateShort(order.created_at)}</span>
+              </div>
+              ${utils.getStatusBadge(order.status)}
+            </div>
+
+            <!-- Body -->
+            <div class="p-5">
+              <div class="flex items-start gap-4">
+                <!-- Product thumbnail -->
+                <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center text-3xl flex-shrink-0">
+                  ${DEMO_EMOJIS[firstItem?.product?.category] || '📦'}
+                </div>
+
+                <!-- Details -->
+                <div class="flex-1 min-w-0">
+                  <p class="font-semibold text-gray-900 text-sm truncate">${firstItem?.product?.name || '-'}</p>
+                  ${moreCount > 0 ? `<p class="text-xs text-gray-400">+${moreCount} produk lainnya</p>` : ''}
+                  <div class="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1.5 text-xs text-gray-400">
+                    <span class="flex items-center gap-1">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                      </svg>
+                      ${order.shipping_city}
+                    </span>
+                    <span class="flex items-center gap-1">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                      </svg>
+                      ${(order.courier || 'JNE REG').toUpperCase()}
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Total -->
+                <div class="text-right flex-shrink-0">
+                  <p class="font-extrabold text-green-600">${utils.formatRupiah(order.total_price)}</p>
+                  <p class="text-xs text-gray-400 mt-0.5">${items.reduce((s,i) => s+i.quantity,0)} item</p>
+                </div>
+              </div>
+
+              <!-- Action row -->
+              <div class="flex items-center gap-2 mt-4 pt-4 border-t border-gray-100">
+                <button onclick="openDetail('${order.id}')"
+                  class="flex items-center gap-1.5 px-4 py-2 border border-gray-200 rounded-xl text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                  </svg>
+                  Detail
+                </button>
+
+                ${canUpdate ? `
+                  <button onclick="openStatusModal('${order.id}', '${order.status}')"
+                    class="flex-1 flex items-center justify-center gap-2 py-2 ${
+                      order.status === 'paid'
+                        ? 'bg-blue-600 hover:bg-blue-700'
+                        : 'bg-indigo-600 hover:bg-indigo-700'
+                    } text-white rounded-xl text-xs font-semibold transition-colors">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      ${order.status === 'paid'
+                        ? '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>'
+                        : '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>'
+                      }
+                    </svg>
+                    ${nextLabel}
+                  </button>
+                ` : ''}
+
+                ${order.status === 'paid' ? `
+                  <button onclick="openStatusModal('${order.id}', '${order.status}', 'cancelled')"
+                    class="px-3 py-2 border border-red-200 text-red-500 hover:bg-red-50 rounded-xl text-xs font-semibold transition-colors">
+                    Tolak
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ── Status tabs ────────────────────────────────────
+    document.querySelectorAll('.status-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        activeStatus = tab.dataset.status;
+        document.querySelectorAll('.status-tab').forEach(t => {
+          const active = t.dataset.status === activeStatus;
+          t.className = `status-tab flex-shrink-0 text-sm font-semibold px-4 py-2 rounded-xl transition-colors ${
+            active ? 'bg-green-600 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:border-green-400'
+          }`;
+        });
+        renderOrders();
+      });
+    });
+
+    // Search
+    let searchTimer;
+    document.getElementById('search-order').addEventListener('input', (e) => {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        searchQuery = e.target.value.toLowerCase().trim();
+        renderOrders();
+      }, 300);
+    });
+
+    // ── Status modal ───────────────────────────────────
+    const STATUS_FLOW = {
+      pending:  ['paid', 'cancelled'],
+      paid:     ['shipped', 'cancelled'],
+      shipped:  ['done'],
+      done:     [],
+      cancelled:[],
+    };
+
+    const STATUS_META = {
+      paid:      { label:'Dibayar',   desc:'Tandai pesanan sudah dibayar',  icon:'💳', color:'text-blue-600 bg-blue-50 border-blue-200' },
+      shipped:   { label:'Dikirim',   desc:'Pesanan sedang dalam pengiriman', icon:'🚚', color:'text-indigo-600 bg-indigo-50 border-indigo-200' },
+      done:      { label:'Selesai',   desc:'Pesanan diterima oleh pembeli', icon:'✅', color:'text-green-600 bg-green-50 border-green-200' },
+      cancelled: { label:'Dibatalkan',desc:'Batalkan pesanan ini',           icon:'❌', color:'text-red-600 bg-red-50 border-red-200' },
+    };
+
+    function openStatusModal(orderId, currentStatus, forceStatus = null) {
+      pendingUpdateId  = orderId;
+      pendingNewStatus = null;
+
+      const order   = allOrders.find(o => String(o.id) === String(orderId));
+      const options = forceStatus ? [forceStatus] : (STATUS_FLOW[currentStatus] || []);
+
+      if (!options.length) { utils.showToast('Tidak ada perubahan status yang tersedia', 'info'); return; }
+
+      // Order info
+      document.getElementById('modal-order-info').innerHTML = `
+        <div class="flex items-center justify-between text-sm">
+          <div>
+            <p class="font-bold text-gray-900">${order?.id}</p>
+            <p class="text-gray-500 text-xs mt-0.5">${order?.buyer?.name}</p>
+          </div>
+          <div class="text-right">
+            <p class="font-bold text-green-600">${utils.formatRupiah(order?.total_price||0)}</p>
+            ${utils.getStatusBadge(currentStatus)}
+          </div>
+        </div>
+      `;
+
+      // Status options
+      const optionsContainer = document.getElementById('status-options');
+      optionsContainer.innerHTML = options.map(s => {
+        const meta = STATUS_META[s];
+        if (!meta) return '';
+        return `
+          <label class="flex items-center gap-3 p-3.5 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-green-400 transition-colors group">
+            <input type="radio" name="new-status" value="${s}" class="text-green-600" />
+            <span class="text-xl">${meta.icon}</span>
+            <div class="flex-1">
+              <p class="text-sm font-semibold text-gray-900">${meta.label}</p>
+              <p class="text-xs text-gray-400">${meta.desc}</p>
+            </div>
+            <span class="text-xs font-semibold px-2 py-1 rounded-full border ${meta.color}">${meta.label}</span>
+          </label>
+        `;
+      }).join('');
+
+      // Highlight on select
+      optionsContainer.querySelectorAll('input[name="new-status"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+          pendingNewStatus = radio.value;
+          optionsContainer.querySelectorAll('label').forEach(l => {
+            l.classList.remove('border-green-500', 'bg-green-50/50');
+            l.classList.add('border-gray-200');
+          });
+          radio.closest('label').classList.remove('border-gray-200');
+          radio.closest('label').classList.add('border-green-500', 'bg-green-50/50');
+
+          // Show resi field if shipping
+          document.getElementById('resi-field').classList.toggle('hidden', radio.value !== 'shipped');
+        });
+      });
+
+      document.getElementById('resi-field').classList.add('hidden');
+      document.getElementById('resi-input').value = '';
+      document.getElementById('modal-status').classList.remove('hidden');
+    }
+
+    // Confirm update
+    document.getElementById('modal-confirm').addEventListener('click', async () => {
+      if (!pendingUpdateId || !pendingNewStatus) {
+        utils.showToast('Pilih status baru terlebih dahulu', 'warning'); return;
+      }
+
+      if (pendingNewStatus === 'shipped') {
+        const resi = document.getElementById('resi-input').value.trim();
+        if (!resi) { utils.showToast('Nomor resi wajib diisi sebelum mengirim', 'warning'); return; }
+      }
+
+      const confirmText = document.getElementById('confirm-text');
+      const spinner     = document.getElementById('confirm-spinner');
+      const confirmBtn  = document.getElementById('modal-confirm');
+      confirmBtn.disabled = true;
+      confirmText.textContent = 'Memperbarui...';
+      spinner.classList.remove('hidden');
+
+      try {
+        const res = await api.put(`/seller/orders/${pendingUpdateId}`, { status: pendingNewStatus });
+        if (res?.success || res?.data) {
+          updateLocalOrder(pendingUpdateId, pendingNewStatus);
+          utils.showToast(`Status berhasil diubah ke "${STATUS_META[pendingNewStatus]?.label}"`, 'success');
+        } else {
+          updateLocalOrder(pendingUpdateId, pendingNewStatus);
+          utils.showToast(`Status diperbarui (demo)`, 'success');
+        }
+      } catch (_) {
+        updateLocalOrder(pendingUpdateId, pendingNewStatus);
+        utils.showToast(`Status diperbarui (demo)`, 'success');
+      } finally {
+        confirmBtn.disabled = false;
+        confirmText.textContent = 'Update Status';
+        spinner.classList.add('hidden');
+        document.getElementById('modal-status').classList.add('hidden');
+      }
+    });
+
+    function updateLocalOrder(orderId, newStatus) {
+      const idx = allOrders.findIndex(o => String(o.id) === String(orderId));
+      if (idx >= 0) allOrders[idx].status = newStatus;
+      updateCountChips();
+      renderOrders();
+    }
+
+    const closeStatus = () => document.getElementById('modal-status').classList.add('hidden');
+    document.getElementById('modal-close').addEventListener('click', closeStatus);
+    document.getElementById('modal-cancel').addEventListener('click', closeStatus);
+    document.getElementById('modal-backdrop').addEventListener('click', closeStatus);
+
+    // ── Detail modal ───────────────────────────────────
+    function openDetail(orderId) {
+      const order = allOrders.find(o => String(o.id) === String(orderId));
+      if (!order) return;
+
+      document.getElementById('detail-body').innerHTML = `
+        <!-- Buyer info -->
+        <div class="flex items-center gap-3 p-4 bg-green-50 rounded-2xl border border-green-100">
+          <div class="w-10 h-10 bg-green-200 rounded-full flex items-center justify-center text-green-700 font-bold text-sm flex-shrink-0">
+            ${(order.buyer?.name || 'B')[0].toUpperCase()}
+          </div>
+          <div class="flex-1">
+            <p class="font-bold text-gray-900 text-sm">${order.buyer?.name || '-'}</p>
+            <p class="text-xs text-gray-500">${order.buyer?.phone || '-'} · ${order.buyer?.email || '-'}</p>
+          </div>
+          ${utils.getStatusBadge(order.status)}
+        </div>
+
+        <!-- Items -->
+        <div>
+          <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Produk Dipesan</p>
+          <div class="space-y-2">
+            ${(order.items || []).map(item => `
+              <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                <span class="text-2xl flex-shrink-0">${DEMO_EMOJIS[item.product?.category]||'📦'}</span>
+                <div class="flex-1">
+                  <p class="text-sm font-semibold text-gray-900">${item.product?.name || '-'}</p>
+                  <p class="text-xs text-gray-400">x${item.quantity} × ${utils.formatRupiah(item.price)}</p>
+                </div>
+                <span class="text-sm font-bold text-gray-900">${utils.formatRupiah(item.price * item.quantity)}</span>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <!-- Shipping -->
+        <div class="bg-gray-50 rounded-2xl p-4 space-y-2 text-sm">
+          <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Info Pengiriman</p>
+          <div class="flex justify-between">
+            <span class="text-gray-500">Alamat</span>
+            <span class="font-medium text-gray-900 text-right max-w-[60%] leading-snug">${order.shipping_address}, ${order.shipping_city}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-500">Kurir</span>
+            <span class="font-medium text-gray-900">${(order.courier||'').toUpperCase()}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-500">Ongkir</span>
+            <span class="font-medium text-gray-900">${utils.formatRupiah(order.shipping_cost||0)}</span>
+          </div>
+        </div>
+
+        <!-- Summary -->
+        <div class="flex justify-between items-center font-bold text-base border-t pt-4">
+          <span class="text-gray-900">Total Pembayaran</span>
+          <span class="text-green-600">${utils.formatRupiah(order.total_price)}</span>
+        </div>
+
+        <p class="text-center text-xs text-gray-400">${utils.formatDate(order.created_at)}</p>
+      `;
+
+      document.getElementById('modal-detail').classList.remove('hidden');
+    }
+
+    document.getElementById('detail-close').addEventListener('click', () => document.getElementById('modal-detail').classList.add('hidden'));
+    document.getElementById('detail-backdrop').addEventListener('click', () => document.getElementById('modal-detail').classList.add('hidden'));
+
+    loadOrders();
+  </script>
+</body>
+</html>
