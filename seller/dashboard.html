@@ -280,13 +280,13 @@
       } catch (_) {}
 
       // Stat cards
-      document.getElementById('stat-revenue').textContent    = utils.formatRupiah(data.total_revenue);
+      document.getElementById('stat-revenue').textContent    = utils.formatRupiah(data.total_sales);
       document.getElementById('stat-orders').textContent     = data.total_orders;
-      document.getElementById('stat-products').textContent   = data.active_products;
-      document.getElementById('stat-low-stock').textContent  = data.low_stock_count ?? data.low_stock?.length ?? 0;
+      document.getElementById('stat-products').textContent   = data.active_products ?? 0;
+      document.getElementById('stat-low-stock').textContent  = data.low_stock_count ?? data.low_stock_products?.length ?? 0;
 
       renderRecentOrders(data.recent_orders || []);
-      renderLowStock(data.low_stock || []);
+      renderLowStock(data.low_stock_products || data.low_stock || []);
       renderDonutChart(data.status_distribution || {});
       renderRevenueChart(MONTHLY_REVENUE, MONTH_LABELS);
     }
