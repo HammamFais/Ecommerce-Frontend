@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Katalog Produk — PasarLokal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../assets/css/custom.css" />
+  <script>
+    tailwind.config = {
+      theme: { extend: { colors: {
+        primary: { DEFAULT: '#16a34a', dark: '#15803d', light: '#dcfce7' },
+        accent:  { DEFAULT: '#f97316', dark: '#ea580c' }
+      }}}
+    }
+  </script>
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+
+  <div id="navbar"></div>
+
+  <!-- Page Header -->
+  <div class="bg-white border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <h1 class="text-2xl font-extrabold text-gray-900">Katalog Produk</h1>
+      <p class="text-sm text-gray-500 mt-1">Temukan produk UMKM lokal terbaik untuk kamu</p>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="flex flex-col lg:flex-row gap-8">
+
+      <!-- ===== SIDEBAR FILTER ===== -->
+      <aside class="w-full lg:w-64 flex-shrink-0">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-5 sticky top-20">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="font-bold text-gray-900">Filter</h2>
+            <button id="reset-filter" class="text-xs text-green-600 hover:text-green-700 font-medium transition-colors">Reset</button>
+          </div>
+
+          <!-- Search -->
+          <div class="mb-5">
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Cari Produk</label>
+            <div class="relative">
+              <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+              </svg>
+              <input type="text" id="search-input" placeholder="Nama produk..."
+                class="w-full pl-9 pr-3 py-2.5 text-sm border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:border-green-500 transition-colors" />
+            </div>
+          </div>
+
+          <!-- Category -->
+          <div class="mb-5">
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Kategori</label>
+            <div class="space-y-1.5" id="category-list">
+              <label class="flex items-center gap-2.5 cursor-pointer group">
+                <input type="radio" name="category" value="" checked class="text-green-600 focus:ring-green-500" />
+                <span class="text-sm text-gray-700 group-hover:text-green-600 transition-colors">Semua Kategori</span>
+              </label>
+              <label class="flex items-center gap-2.5 cursor-pointer group">
+                <input type="radio" name="category" value="makanan" class="text-green-600 focus:ring-green-500" />
+                <span class="text-sm text-gray-700 group-hover:text-green-600 transition-colors">🍱 Makanan & Minuman</span>
+              </label>
+              <label class="flex items-center gap-2.5 cursor-pointer group">
+                <input type="radio" name="category" value="kerajinan" class="text-green-600 focus:ring-green-500" />
+                <span class="text-sm text-gray-700 group-hover:text-green-600 transition-colors">👜 Kerajinan Tangan</span>
+              </label>
+              <label class="flex items-center gap-2.5 cursor-pointer group">
+                <input type="radio" name="category" value="fashion" class="text-green-600 focus:ring-green-500" />
+                <span class="text-sm text-gray-700 group-hover:text-green-600 transition-colors">👗 Fashion & Pakaian</span>
+              </label>
+              <label class="flex items-center gap-2.5 cursor-pointer group">
+                <input type="radio" name="category" value="elektronik" class="text-green-600 focus:ring-green-500" />
+                <span class="text-sm text-gray-700 group-hover:text-green-600 transition-colors">📱 Elektronik</span>
+              </label>
+              <label class="flex items-center gap-2.5 cursor-pointer group">
+                <input type="radio" name="category" value="pertanian" class="text-green-600 focus:ring-green-500" />
+                <span class="text-sm text-gray-700 group-hover:text-green-600 transition-colors">🌱 Pertanian & Kebun</span>
+              </label>
+              <label class="flex items-center gap-2.5 cursor-pointer group">
+                <input type="radio" name="category" value="lainnya" class="text-green-600 focus:ring-green-500" />
+                <span class="text-sm text-gray-700 group-hover:text-green-600 transition-colors">🎁 Lainnya</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Price Range -->
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Rentang Harga</label>
+            <div class="space-y-2">
+              <div class="relative">
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">Rp</span>
+                <input type="number" id="price-min" placeholder="Min"
+                  class="w-full pl-8 pr-3 py-2.5 text-sm border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:border-green-500 transition-colors" />
+              </div>
+              <div class="relative">
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">Rp</span>
+                <input type="number" id="price-max" placeholder="Max"
+                  class="w-full pl-8 pr-3 py-2.5 text-sm border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:border-green-500 transition-colors" />
+              </div>
+              <button id="apply-price"
+                class="w-full bg-green-600 hover:bg-green-700 text-white text-sm font-semibold py-2.5 rounded-xl transition-colors">
+                Terapkan
+              </button>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- ===== PRODUCT GRID ===== -->
+      <div class="flex-1 min-w-0">
+
+        <!-- Toolbar -->
+        <div class="flex items-center justify-between mb-5">
+          <p id="result-count" class="text-sm text-gray-500">Memuat produk...</p>
+          <div class="flex items-center gap-2">
+            <label class="text-sm text-gray-500 hidden sm:inline">Urutkan:</label>
+            <select id="sort-select"
+              class="text-sm border border-gray-200 rounded-xl px-3 py-2 bg-white focus:border-green-500 transition-colors">
+              <option value="">Terbaru</option>
+              <option value="price_asc">Harga Termurah</option>
+              <option value="price_desc">Harga Termahal</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Category chips (mobile) -->
+        <div class="flex gap-2 overflow-x-auto pb-2 mb-5 lg:hidden scrollbar-hide">
+          <button data-cat="" class="cat-chip flex-shrink-0 bg-green-600 text-white text-xs font-semibold px-4 py-1.5 rounded-full transition-colors">Semua</button>
+          <button data-cat="makanan" class="cat-chip flex-shrink-0 bg-white border border-gray-200 text-gray-600 text-xs font-semibold px-4 py-1.5 rounded-full transition-colors hover:border-green-400">🍱 Makanan</button>
+          <button data-cat="kerajinan" class="cat-chip flex-shrink-0 bg-white border border-gray-200 text-gray-600 text-xs font-semibold px-4 py-1.5 rounded-full transition-colors hover:border-green-400">👜 Kerajinan</button>
+          <button data-cat="fashion" class="cat-chip flex-shrink-0 bg-white border border-gray-200 text-gray-600 text-xs font-semibold px-4 py-1.5 rounded-full transition-colors hover:border-green-400">👗 Fashion</button>
+          <button data-cat="pertanian" class="cat-chip flex-shrink-0 bg-white border border-gray-200 text-gray-600 text-xs font-semibold px-4 py-1.5 rounded-full transition-colors hover:border-green-400">🌱 Pertanian</button>
+          <button data-cat="lainnya" class="cat-chip flex-shrink-0 bg-white border border-gray-200 text-gray-600 text-xs font-semibold px-4 py-1.5 rounded-full transition-colors hover:border-green-400">🎁 Lainnya</button>
+        </div>
+
+        <!-- Grid -->
+        <div id="product-grid">
+          <!-- Skeleton -->
+          <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4">
+            <div class="bg-white rounded-2xl h-72 animate-pulse border border-gray-100"></div>
+            <div class="bg-white rounded-2xl h-72 animate-pulse border border-gray-100 delay-100"></div>
+            <div class="bg-white rounded-2xl h-72 animate-pulse border border-gray-100 delay-200"></div>
+            <div class="bg-white rounded-2xl h-72 animate-pulse border border-gray-100 delay-300"></div>
+            <div class="bg-white rounded-2xl h-72 animate-pulse border border-gray-100"></div>
+            <div class="bg-white rounded-2xl h-72 animate-pulse border border-gray-100"></div>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div id="pagination" class="flex justify-center items-center gap-2 mt-8"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="footer"></div>
+
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script>
+    utils.injectNavbar('catalog');
+    utils.injectFooter();
+
+    let currentPage = 1;
+    let currentCategory = '';
+    let currentSearch = '';
+    let currentSort = '';
+    let priceMin = '';
+    let priceMax = '';
+    let searchTimer = null;
+
+    // Demo products fallback
+    const DEMO_PRODUCTS = [
+      { id:1, name:'Kue Nastar Spesial', price:45000, category:'makanan', stock:50, image_url:null, seller:{name:'Dapur Bu Sari'} },
+      { id:2, name:'Tas Anyaman Bambu', price:120000, category:'kerajinan', stock:15, image_url:null, seller:{name:'Kerajinan Nusantara'} },
+      { id:3, name:'Teh Herbal Organik', price:35000, category:'pertanian', stock:100, image_url:null, seller:{name:'Kebun Sehat'} },
+      { id:4, name:'Batik Tulis Solo', price:285000, category:'fashion', stock:8, image_url:null, seller:{name:'Batik Putri'} },
+      { id:5, name:'Coklat Edamame', price:55000, category:'makanan', stock:30, image_url:null, seller:{name:'Snack Lokal'} },
+      { id:6, name:'Gerabah Dekoratif', price:95000, category:'kerajinan', stock:20, image_url:null, seller:{name:'Tanah Liat Art'} },
+      { id:7, name:'Beras Organik 5kg', price:75000, category:'pertanian', stock:45, image_url:null, seller:{name:'Sawah Hijau'} },
+      { id:8, name:'Sabun Herbal Aloe', price:28000, category:'lainnya', stock:60, image_url:null, seller:{name:'Herbal Beauty'} },
+      { id:9, name:'Keripik Singkong Balado', price:22000, category:'makanan', stock:80, image_url:null, seller:{name:'Dapur Ibu'} },
+      { id:10, name:'Gelang Manik Tradisional', price:65000, category:'kerajinan', stock:35, image_url:null, seller:{name:'Manik Nusa'} },
+      { id:11, name:'Kemeja Lurik', price:175000, category:'fashion', stock:12, image_url:null, seller:{name:'Tenun Jawa'} },
+      { id:12, name:'Madu Hutan Asli', price:95000, category:'pertanian', stock:25, image_url:null, seller:{name:'Hutan Lebah'} },
+    ];
+
+    const DEMO_EMOJIS = { makanan:'🍱', kerajinan:'👜', fashion:'👗', elektronik:'📱', pertanian:'🌿', lainnya:'🎁' };
+
+    async function loadProducts() {
+      const grid = document.getElementById('product-grid');
+      grid.innerHTML = `<div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4">
+        ${[1,2,3,4,5,6].map(() => '<div class="bg-white rounded-2xl h-72 animate-pulse border border-gray-100"></div>').join('')}
+      </div>`;
+
+      let endpoint = `/products?page=${currentPage}&per_page=12`;
+      if (currentCategory) endpoint += `&category=${currentCategory}`;
+      if (currentSearch)   endpoint += `&search=${encodeURIComponent(currentSearch)}`;
+      if (priceMin)        endpoint += `&price_min=${priceMin}`;
+      if (priceMax)        endpoint += `&price_max=${priceMax}`;
+
+      let products = [], total = 0, lastPage = 1;
+
+      try {
+        const res = await api.get(endpoint);
+        if (res.success || res.data) {
+          const data = res.data?.data || res.data || [];
+          products = data;
+          total = res.data?.total || data.length;
+          lastPage = res.data?.last_page || 1;
+        }
+      } catch (_) {
+        // Use demo data
+        let filtered = [...DEMO_PRODUCTS];
+        if (currentCategory) filtered = filtered.filter(p => p.category === currentCategory);
+        if (currentSearch) filtered = filtered.filter(p => p.name.toLowerCase().includes(currentSearch.toLowerCase()));
+        if (priceMin) filtered = filtered.filter(p => p.price >= Number(priceMin));
+        if (priceMax) filtered = filtered.filter(p => p.price <= Number(priceMax));
+        if (currentSort === 'price_asc') filtered.sort((a,b) => a.price - b.price);
+        if (currentSort === 'price_desc') filtered.sort((a,b) => b.price - a.price);
+        total = filtered.length;
+        products = filtered.slice((currentPage-1)*12, currentPage*12);
+        lastPage = Math.ceil(total / 12);
+      }
+
+      // Sort client-side too if needed
+      if (currentSort === 'price_asc') products.sort((a,b) => a.price - b.price);
+      if (currentSort === 'price_desc') products.sort((a,b) => b.price - a.price);
+
+      document.getElementById('result-count').textContent =
+        `Menampilkan ${products.length} dari ${total} produk`;
+
+      if (!products.length) {
+        grid.innerHTML = `<div class="col-span-full flex flex-col items-center py-24 gap-4 text-gray-400">
+          <span class="text-6xl">🔍</span>
+          <p class="text-lg font-medium">Produk tidak ditemukan</p>
+          <p class="text-sm">Coba kata kunci atau filter lain</p>
+        </div>`;
+        document.getElementById('pagination').innerHTML = '';
+        return;
+      }
+
+      grid.innerHTML = `<div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4">
+        ${products.map(p => `
+          <a href="product-detail.html?id=${p.id}"
+             class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden group block fade-in-up">
+            <div class="aspect-square overflow-hidden bg-gradient-to-br from-green-50 to-emerald-100 relative">
+              ${p.image_url
+                ? `<img src="${utils.getProductImageUrl(p.image_url)}" alt="${p.name}"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+                   <div class="hidden w-full h-full items-center justify-center text-5xl">${DEMO_EMOJIS[p.category] || '📦'}</div>`
+                : `<div class="w-full h-full flex items-center justify-center text-5xl">${DEMO_EMOJIS[p.category] || '📦'}</div>`
+              }
+              ${p.stock < 5 ? '<span class="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">Hampir Habis</span>' : ''}
+            </div>
+            <div class="p-3.5">
+              <p class="text-xs text-gray-400 mb-1">${utils.getCategoryLabel(p.category)}</p>
+              <h3 class="font-semibold text-gray-900 text-sm leading-snug mb-1 line-clamp-2">${p.name}</h3>
+              <p class="text-xs text-gray-400 mb-2">${p.seller?.name || 'Seller'}</p>
+              <div class="flex items-center justify-between">
+                <span class="text-green-600 font-bold">${utils.formatRupiah(p.price)}</span>
+                <span class="text-xs text-gray-400">Stok ${p.stock}</span>
+              </div>
+            </div>
+          </a>
+        `).join('')}
+      </div>`;
+
+      renderPagination(lastPage);
+    }
+
+    function renderPagination(lastPage) {
+      const el = document.getElementById('pagination');
+      if (lastPage <= 1) { el.innerHTML = ''; return; }
+
+      let pages = '';
+      for (let i = 1; i <= lastPage; i++) {
+        const active = i === currentPage;
+        pages += `<button onclick="goPage(${i})"
+          class="w-9 h-9 rounded-lg text-sm font-semibold transition-colors ${active
+            ? 'bg-green-600 text-white shadow-sm'
+            : 'bg-white border border-gray-200 text-gray-600 hover:border-green-400 hover:text-green-600'}">${i}</button>`;
+      }
+
+      el.innerHTML = `
+        <button onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}
+          class="w-9 h-9 rounded-lg border border-gray-200 bg-white text-gray-500 hover:border-green-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex items-center justify-center">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+          </svg>
+        </button>
+        ${pages}
+        <button onclick="goPage(${currentPage+1})" ${currentPage===lastPage?'disabled':''}
+          class="w-9 h-9 rounded-lg border border-gray-200 bg-white text-gray-500 hover:border-green-400 disabled:opacity-30 disabled:cursor-not-allowed transition-colors flex items-center justify-center">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </button>
+      `;
+    }
+
+    function goPage(page) {
+      currentPage = page;
+      loadProducts();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Category radio (desktop)
+    document.querySelectorAll('input[name="category"]').forEach(radio => {
+      radio.addEventListener('change', () => {
+        currentCategory = radio.value;
+        currentPage = 1;
+        updateMobileChips(currentCategory);
+        loadProducts();
+      });
+    });
+
+    // Category chips (mobile)
+    document.querySelectorAll('.cat-chip').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentCategory = btn.dataset.cat;
+        currentPage = 1;
+        // Sync desktop radio
+        const radio = document.querySelector(`input[name="category"][value="${currentCategory}"]`);
+        if (radio) radio.checked = true;
+        updateMobileChips(currentCategory);
+        loadProducts();
+      });
+    });
+
+    function updateMobileChips(cat) {
+      document.querySelectorAll('.cat-chip').forEach(b => {
+        const active = b.dataset.cat === cat;
+        b.className = `cat-chip flex-shrink-0 text-xs font-semibold px-4 py-1.5 rounded-full transition-colors ${
+          active ? 'bg-green-600 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:border-green-400'
+        }`;
+      });
+    }
+
+    // Search debounce
+    document.getElementById('search-input').addEventListener('input', (e) => {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(() => {
+        currentSearch = e.target.value.trim();
+        currentPage = 1;
+        loadProducts();
+      }, 400);
+    });
+
+    // Sort
+    document.getElementById('sort-select').addEventListener('change', (e) => {
+      currentSort = e.target.value;
+      currentPage = 1;
+      loadProducts();
+    });
+
+    // Price filter
+    document.getElementById('apply-price').addEventListener('click', () => {
+      priceMin = document.getElementById('price-min').value;
+      priceMax = document.getElementById('price-max').value;
+      currentPage = 1;
+      loadProducts();
+    });
+
+    // Reset
+    document.getElementById('reset-filter').addEventListener('click', () => {
+      currentCategory = ''; currentSearch = ''; currentSort = ''; priceMin = ''; priceMax = '';
+      currentPage = 1;
+      document.getElementById('search-input').value = '';
+      document.getElementById('price-min').value = '';
+      document.getElementById('price-max').value = '';
+      document.getElementById('sort-select').value = '';
+      document.querySelector('input[name="category"][value=""]').checked = true;
+      updateMobileChips('');
+      loadProducts();
+    });
+
+    loadProducts();
+  </script>
+</body>
+</html>

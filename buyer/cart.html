@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Keranjang Belanja — PasarLokal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../assets/css/custom.css" />
+  <script>
+    tailwind.config = {
+      theme: { extend: { colors: {
+        primary: { DEFAULT: '#16a34a', dark: '#15803d', light: '#dcfce7' },
+        accent:  { DEFAULT: '#f97316', dark: '#ea580c' }
+      }}}
+    }
+  </script>
+</head>
+<body class="bg-gray-50 font-sans antialiased">
+
+  <div id="navbar"></div>
+
+  <div class="bg-white border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <h1 class="text-2xl font-extrabold text-gray-900 flex items-center gap-3">
+        <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+        </svg>
+        Keranjang Belanja
+      </h1>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div id="cart-loading" class="flex flex-col items-center py-24 gap-3 text-gray-400">
+      <div class="w-10 h-10 border-4 border-green-600 border-t-transparent rounded-full animate-spin"></div>
+      <p class="text-sm">Memuat keranjang...</p>
+    </div>
+
+    <div id="cart-empty" class="hidden flex flex-col items-center py-32 gap-4 text-gray-400">
+      <span class="text-7xl">🛒</span>
+      <p class="text-xl font-bold text-gray-600">Keranjangmu masih kosong</p>
+      <p class="text-sm text-gray-400">Yuk, temukan produk UMKM favoritmu!</p>
+      <a href="catalog.html" class="mt-2 bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 rounded-xl transition-colors">
+        Mulai Belanja
+      </a>
+    </div>
+
+    <div id="cart-content" class="hidden">
+      <div class="flex flex-col lg:flex-row gap-8">
+
+        <!-- Cart items -->
+        <div class="flex-1 min-w-0 space-y-4">
+          <!-- Select all -->
+          <div class="bg-white rounded-2xl border border-gray-100 px-5 py-3.5 flex items-center justify-between">
+            <label class="flex items-center gap-3 cursor-pointer">
+              <input type="checkbox" id="select-all"
+                class="w-4.5 h-4.5 rounded border-gray-300 text-green-600 focus:ring-green-500 cursor-pointer" />
+              <span class="text-sm font-semibold text-gray-700">Pilih Semua</span>
+            </label>
+            <button id="btn-delete-selected"
+              class="text-sm text-red-500 hover:text-red-600 font-medium transition-colors hidden">
+              Hapus Terpilih
+            </button>
+          </div>
+
+          <!-- Item list -->
+          <div id="cart-items" class="space-y-3"></div>
+        </div>
+
+        <!-- Summary -->
+        <div class="w-full lg:w-80 flex-shrink-0">
+          <div class="bg-white rounded-2xl border border-gray-100 p-5 sticky top-20 space-y-4">
+            <h2 class="font-bold text-gray-900 text-lg">Ringkasan Belanja</h2>
+
+            <div class="space-y-2.5 text-sm">
+              <div class="flex justify-between text-gray-600">
+                <span>Subtotal (<span id="summary-count">0</span> produk)</span>
+                <span id="summary-subtotal" class="font-semibold text-gray-900">Rp0</span>
+              </div>
+              <div class="flex justify-between text-gray-500">
+                <span>Ongkir</span>
+                <span class="text-xs text-gray-400 italic">Dihitung saat checkout</span>
+              </div>
+            </div>
+
+            <div class="border-t border-dashed border-gray-200 pt-4 flex justify-between items-center">
+              <span class="font-bold text-gray-900">Total</span>
+              <span id="summary-total" class="text-xl font-extrabold text-green-600">Rp0</span>
+            </div>
+
+            <button id="btn-checkout"
+              class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3.5 rounded-xl transition-all duration-200 shadow-sm hover:shadow-md hover:shadow-green-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+              Checkout Sekarang
+            </button>
+
+            <a href="catalog.html"
+              class="block w-full text-center text-sm text-green-600 hover:text-green-700 font-medium transition-colors py-2">
+              ← Lanjut Belanja
+            </a>
+
+            <!-- Security note -->
+            <div class="bg-green-50 border border-green-100 rounded-xl p-3 flex items-start gap-2">
+              <svg class="w-4 h-4 text-green-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+              </svg>
+              <p class="text-xs text-green-700">Transaksi kamu dilindungi oleh sistem keamanan PasarLokal</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="footer"></div>
+
+  <!-- Confirm delete modal -->
+  <div id="modal-delete" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" id="modal-backdrop"></div>
+    <div class="relative bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 text-center space-y-4">
+      <div class="w-14 h-14 bg-red-100 rounded-2xl flex items-center justify-center mx-auto">
+        <svg class="w-7 h-7 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+        </svg>
+      </div>
+      <div>
+        <h3 class="font-bold text-gray-900">Hapus dari Keranjang?</h3>
+        <p class="text-sm text-gray-500 mt-1">Item ini akan dihapus dari keranjang belanjamu.</p>
+      </div>
+      <div class="flex gap-3">
+        <button id="modal-cancel" class="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">Batal</button>
+        <button id="modal-confirm" class="flex-1 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-sm font-semibold text-white transition-colors">Hapus</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script>
+    utils.injectNavbar('cart');
+    utils.injectFooter();
+    auth.requireAuth(['buyer', 'admin']);
+
+    const DEMO_EMOJIS = { makanan:'🍱', kerajinan:'👜', fashion:'👗', elektronik:'📱', pertanian:'🌿', lainnya:'🎁' };
+    const DEMO_CART = [
+      { id:1, quantity:2, product:{ id:1, name:'Kue Nastar Spesial', price:45000, category:'makanan', stock:50, image_url:null, seller:{name:'Dapur Bu Sari'} } },
+      { id:2, quantity:1, product:{ id:2, name:'Tas Anyaman Bambu', price:120000, category:'kerajinan', stock:15, image_url:null, seller:{name:'Kerajinan Nusantara'} } },
+    ];
+
+    let cartItems = [];
+    let pendingDeleteId = null;
+
+    async function loadCart() {
+      try {
+        const res = await api.get('/cart');
+        if (res.success) {
+          cartItems = res.data || [];
+        } else {
+          cartItems = DEMO_CART;
+        }
+      } catch (_) {
+        cartItems = DEMO_CART;
+      }
+      renderCart();
+    }
+
+    function renderCart() {
+      document.getElementById('cart-loading').classList.add('hidden');
+
+      if (!cartItems.length) {
+        document.getElementById('cart-empty').classList.remove('hidden');
+        return;
+      }
+
+      document.getElementById('cart-content').classList.remove('hidden');
+
+      const container = document.getElementById('cart-items');
+      container.innerHTML = cartItems.map(item => {
+        const p = item.product;
+        const subtotal = p.price * item.quantity;
+        return `
+          <div class="bg-white rounded-2xl border border-gray-100 p-4 flex gap-4 items-start" data-id="${item.id}">
+            <input type="checkbox" class="item-checkbox mt-1 w-4 h-4 rounded border-gray-300 text-green-600 focus:ring-green-500 cursor-pointer flex-shrink-0"
+                   data-id="${item.id}" />
+
+            <!-- Product image -->
+            <div class="w-20 h-20 rounded-xl overflow-hidden bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center flex-shrink-0">
+              ${p.image_url
+                ? `<img src="${utils.getProductImageUrl(p.image_url)}" alt="${p.name}" class="w-full h-full object-cover"
+                        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+                   <span class="hidden text-3xl">${DEMO_EMOJIS[p.category]||'📦'}</span>`
+                : `<span class="text-3xl">${DEMO_EMOJIS[p.category]||'📦'}</span>`
+              }
+            </div>
+
+            <!-- Info -->
+            <div class="flex-1 min-w-0">
+              <a href="product-detail.html?id=${p.id}"
+                 class="font-semibold text-gray-900 hover:text-green-600 transition-colors text-sm leading-snug line-clamp-2 block">${p.name}</a>
+              <p class="text-xs text-gray-400 mt-0.5">${p.seller?.name || 'UMKM Lokal'}</p>
+              <p class="text-green-600 font-bold mt-1">${utils.formatRupiah(p.price)}</p>
+
+              <!-- Qty + delete row -->
+              <div class="flex items-center justify-between mt-3">
+                <div class="flex items-center border border-gray-200 rounded-xl overflow-hidden bg-gray-50">
+                  <button onclick="changeQty(${item.id}, ${item.quantity - 1})"
+                    class="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors font-bold">−</button>
+                  <span class="w-10 text-center text-sm font-bold text-gray-900">${item.quantity}</span>
+                  <button onclick="changeQty(${item.id}, ${item.quantity + 1})"
+                    class="w-8 h-8 flex items-center justify-center text-gray-500 hover:bg-gray-100 transition-colors font-bold ${item.quantity >= p.stock ? 'opacity-30 cursor-not-allowed' : ''}">+</button>
+                </div>
+                <div class="flex items-center gap-3">
+                  <span class="text-sm font-bold text-gray-900">${utils.formatRupiah(subtotal)}</span>
+                  <button onclick="confirmDelete(${item.id})"
+                    class="text-gray-300 hover:text-red-500 transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Attach checkbox listeners
+      document.querySelectorAll('.item-checkbox').forEach(cb => {
+        cb.addEventListener('change', updateSummary);
+      });
+
+      // Auto-check all
+      document.querySelectorAll('.item-checkbox').forEach(cb => cb.checked = true);
+      document.getElementById('select-all').checked = true;
+      updateSummary();
+    }
+
+    function updateSummary() {
+      const checked = [...document.querySelectorAll('.item-checkbox:checked')];
+      const selectedIds = new Set(checked.map(cb => parseInt(cb.dataset.id)));
+      const selected = cartItems.filter(item => selectedIds.has(item.id));
+
+      const count = selected.reduce((s, item) => s + item.quantity, 0);
+      const subtotal = selected.reduce((s, item) => s + item.product.price * item.quantity, 0);
+
+      document.getElementById('summary-count').textContent = selected.length;
+      document.getElementById('summary-subtotal').textContent = utils.formatRupiah(subtotal);
+      document.getElementById('summary-total').textContent = utils.formatRupiah(subtotal);
+      document.getElementById('btn-checkout').disabled = selected.length === 0;
+
+      // Show delete selected if any checked
+      const deletBtn = document.getElementById('btn-delete-selected');
+      deletBtn.classList.toggle('hidden', selected.length === 0);
+
+      // Sync select-all
+      const allChecked = document.querySelectorAll('.item-checkbox').length === checked.length;
+      document.getElementById('select-all').checked = allChecked && checked.length > 0;
+    }
+
+    // Select all
+    document.getElementById('select-all').addEventListener('change', (e) => {
+      document.querySelectorAll('.item-checkbox').forEach(cb => {
+        cb.checked = e.target.checked;
+      });
+      updateSummary();
+    });
+
+    async function changeQty(cartId, newQty) {
+      const item = cartItems.find(i => i.id === cartId);
+      if (!item) return;
+      if (newQty < 1) { confirmDelete(cartId); return; }
+      if (newQty > item.product.stock) {
+        utils.showToast(`Stok hanya ${item.product.stock} unit`, 'warning'); return;
+      }
+
+      try {
+        await api.put(`/cart/${cartId}`, { quantity: newQty });
+      } catch (_) {}
+      item.quantity = newQty;
+      renderCart();
+    }
+
+    // Delete modal
+    function confirmDelete(cartId) {
+      pendingDeleteId = cartId;
+      document.getElementById('modal-delete').classList.remove('hidden');
+    }
+
+    document.getElementById('modal-cancel').addEventListener('click', () => {
+      document.getElementById('modal-delete').classList.add('hidden');
+    });
+    document.getElementById('modal-backdrop').addEventListener('click', () => {
+      document.getElementById('modal-delete').classList.add('hidden');
+    });
+
+    document.getElementById('modal-confirm').addEventListener('click', async () => {
+      document.getElementById('modal-delete').classList.add('hidden');
+      if (pendingDeleteId === null) return;
+      try {
+        await api.delete(`/cart/${pendingDeleteId}`);
+      } catch (_) {}
+      cartItems = cartItems.filter(i => i.id !== pendingDeleteId);
+      pendingDeleteId = null;
+      utils.showToast('Item dihapus dari keranjang', 'success');
+      if (!cartItems.length) {
+        document.getElementById('cart-content').classList.add('hidden');
+        document.getElementById('cart-empty').classList.remove('hidden');
+      } else {
+        renderCart();
+      }
+    });
+
+    // Delete selected
+    document.getElementById('btn-delete-selected').addEventListener('click', async () => {
+      const checked = [...document.querySelectorAll('.item-checkbox:checked')];
+      const ids = checked.map(cb => parseInt(cb.dataset.id));
+      for (const id of ids) {
+        try { await api.delete(`/cart/${id}`); } catch (_) {}
+      }
+      cartItems = cartItems.filter(i => !ids.includes(i.id));
+      utils.showToast(`${ids.length} item dihapus`, 'success');
+      if (!cartItems.length) {
+        document.getElementById('cart-content').classList.add('hidden');
+        document.getElementById('cart-empty').classList.remove('hidden');
+      } else {
+        renderCart();
+      }
+    });
+
+    // Checkout
+    document.getElementById('btn-checkout').addEventListener('click', () => {
+      const checked = [...document.querySelectorAll('.item-checkbox:checked')];
+      if (!checked.length) { utils.showToast('Pilih produk yang ingin di-checkout', 'warning'); return; }
+      const ids = checked.map(cb => cb.dataset.id).join(',');
+      window.location.href = `checkout.html?items=${ids}`;
+    });
+
+    loadCart();
+  </script>
+</body>
+</html>

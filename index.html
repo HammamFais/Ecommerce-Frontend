@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PasarLokal — Belanja Produk UMKM Lokal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="assets/css/custom.css" />
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: { DEFAULT: '#16a34a', dark: '#15803d', light: '#dcfce7' },
+            accent:  { DEFAULT: '#f97316', dark: '#ea580c' }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-white text-gray-900 font-sans antialiased">
+
+  <!-- Navbar -->
+  <div id="navbar"></div>
+
+  <!-- ===== HERO SECTION ===== -->
+  <section class="hero-gradient relative overflow-hidden min-h-[92vh] flex items-center">
+    <!-- Decorative circles -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+      <div class="absolute -top-24 -right-24 w-96 h-96 bg-white/5 rounded-full"></div>
+      <div class="absolute top-1/2 -left-32 w-80 h-80 bg-white/5 rounded-full"></div>
+      <div class="absolute bottom-0 right-1/4 w-64 h-64 bg-orange-400/10 rounded-full"></div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-20">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+
+        <!-- Left: Text Content -->
+        <div class="text-white space-y-7">
+          <div class="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium border border-white/20 fade-in-up">
+            <span class="w-2 h-2 bg-orange-400 rounded-full pulse-dot"></span>
+            Platform UMKM Lokal Indonesia
+          </div>
+
+          <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight fade-in-up delay-100">
+            Belanja Produk<br/>
+            <span class="text-orange-300">Lokal</span> Berkualitas<br/>
+            Dari UMKM Kita
+          </h1>
+
+          <p class="text-lg text-white/80 max-w-md leading-relaxed fade-in-up delay-200">
+            PasarLokal menghubungkan kamu dengan ribuan produk unggulan dari UMKM lokal di seluruh Indonesia.
+            Belanja mudah, aman, dan dukung ekonomi lokal!
+          </p>
+
+          <div class="flex flex-wrap gap-4 fade-in-up delay-300">
+            <a href="buyer/catalog.html"
+               class="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 flex items-center gap-2">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+              </svg>
+              Mulai Belanja
+            </a>
+            <a href="auth/register.html"
+               class="bg-white/15 hover:bg-white/25 border border-white/30 text-white font-semibold px-8 py-3.5 rounded-xl transition-all duration-200 backdrop-blur-sm">
+              Jual Produkmu
+            </a>
+          </div>
+
+          <!-- Stats strip -->
+          <div class="flex flex-wrap gap-6 pt-4 fade-in-up delay-400">
+            <div>
+              <p class="text-2xl font-extrabold text-white">500+</p>
+              <p class="text-xs text-white/60 uppercase tracking-wide">Produk</p>
+            </div>
+            <div class="w-px bg-white/20"></div>
+            <div>
+              <p class="text-2xl font-extrabold text-white">100+</p>
+              <p class="text-xs text-white/60 uppercase tracking-wide">UMKM</p>
+            </div>
+            <div class="w-px bg-white/20"></div>
+            <div>
+              <p class="text-2xl font-extrabold text-white">1.000+</p>
+              <p class="text-xs text-white/60 uppercase tracking-wide">Pembeli</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Floating Card Illustration -->
+        <div class="hidden lg:flex justify-center items-center relative">
+          <div class="float">
+            <!-- Main card -->
+            <div class="bg-white rounded-3xl shadow-2xl p-6 w-80 relative">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+                  <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+                  </svg>
+                </div>
+                <div>
+                  <p class="font-bold text-gray-900 text-sm">Pesanan Baru!</p>
+                  <p class="text-xs text-gray-400">2 menit lalu</p>
+                </div>
+                <span class="ml-auto w-2 h-2 bg-green-500 rounded-full pulse-dot"></span>
+              </div>
+
+              <!-- Product rows -->
+              <div class="space-y-3">
+                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                  <div class="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center text-2xl">🍪</div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-semibold text-gray-800 truncate">Kue Nastar Spesial</p>
+                    <p class="text-xs text-gray-400">UMKM Dapur Bu Sari</p>
+                  </div>
+                  <span class="text-green-600 text-sm font-bold">Rp45rb</span>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                  <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center text-2xl">👜</div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-semibold text-gray-800 truncate">Tas Anyaman Bambu</p>
+                    <p class="text-xs text-gray-400">Kerajinan Nusantara</p>
+                  </div>
+                  <span class="text-green-600 text-sm font-bold">Rp120rb</span>
+                </div>
+                <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                  <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center text-2xl">🌿</div>
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-semibold text-gray-800 truncate">Teh Herbal Organik</p>
+                    <p class="text-xs text-gray-400">Kebun Sehat</p>
+                  </div>
+                  <span class="text-green-600 text-sm font-bold">Rp35rb</span>
+                </div>
+              </div>
+
+              <div class="mt-4 pt-4 border-t border-gray-100 flex items-center justify-between">
+                <span class="text-xs text-gray-400">Total Pesanan</span>
+                <span class="font-bold text-green-600">Rp200.000</span>
+              </div>
+            </div>
+
+            <!-- Floating badges -->
+            <div class="absolute -top-6 -right-6 bg-orange-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
+              🔥 Terlaris
+            </div>
+            <div class="absolute -bottom-4 -left-6 bg-white shadow-xl rounded-2xl px-4 py-3 flex items-center gap-2">
+              <span class="text-green-500 text-xl">✓</span>
+              <div>
+                <p class="text-xs font-bold text-gray-800">Pembayaran Aman</p>
+                <p class="text-xs text-gray-400">via Midtrans</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Wave divider -->
+    <div class="absolute bottom-0 left-0 w-full overflow-hidden leading-none">
+      <svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" class="w-full h-auto fill-white">
+        <path d="M0,40 C360,80 1080,0 1440,40 L1440,60 L0,60 Z"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ===== CATEGORY STRIP ===== -->
+  <section class="py-10 bg-white overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
+      <p class="text-xs font-semibold uppercase tracking-widest text-gray-400 text-center">Kategori Produk</p>
+    </div>
+    <div class="overflow-hidden">
+      <div class="marquee-track flex gap-4 w-max">
+        <!-- duplicated for seamless loop -->
+        <script>
+          const cats = [
+            { emoji: '🍱', label: 'Makanan & Minuman' },
+            { emoji: '👜', label: 'Kerajinan Tangan' },
+            { emoji: '👗', label: 'Fashion & Pakaian' },
+            { emoji: '📱', label: 'Elektronik' },
+            { emoji: '🌱', label: 'Pertanian & Kebun' },
+            { emoji: '🎁', label: 'Lainnya' },
+          ];
+          const strip = cats.concat(cats).map(c =>
+            `<div class="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-full px-5 py-2.5 whitespace-nowrap hover:bg-green-50 hover:border-green-200 transition-colors cursor-pointer">
+               <span class="text-xl">${c.emoji}</span>
+               <span class="text-sm font-medium text-gray-700">${c.label}</span>
+             </div>`
+          ).join('');
+          document.write(strip);
+        </script>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FEATURES SECTION ===== -->
+  <section class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-14">
+        <p class="text-xs font-semibold uppercase tracking-widest text-green-600 mb-2">Mengapa PasarLokal?</p>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900">Belanja Lebih Mudah, Dukung UMKM Lokal</h2>
+        <p class="mt-4 text-gray-500 max-w-xl mx-auto">Platform yang dirancang khusus untuk mempertemukan pembeli dan penjual UMKM lokal dengan pengalaman belanja yang nyaman.</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <!-- Feature 1 -->
+        <div class="bg-white rounded-2xl p-7 shadow-sm hover:shadow-md transition-shadow group">
+          <div class="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-green-600 transition-colors">
+            <svg class="w-7 h-7 text-green-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+            </svg>
+          </div>
+          <h3 class="font-bold text-gray-900 text-lg mb-2">Pembayaran Aman</h3>
+          <p class="text-gray-500 text-sm leading-relaxed">Transaksi dilindungi oleh Midtrans Payment Gateway dengan enkripsi SSL. Uang kamu aman!</p>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="bg-white rounded-2xl p-7 shadow-sm hover:shadow-md transition-shadow group">
+          <div class="w-14 h-14 bg-orange-100 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-orange-500 transition-colors">
+            <svg class="w-7 h-7 text-orange-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+            </svg>
+          </div>
+          <h3 class="font-bold text-gray-900 text-lg mb-2">Pengiriman ke Seluruh Indonesia</h3>
+          <p class="text-gray-500 text-sm leading-relaxed">Cek ongkir otomatis via RajaOngkir. Didukung berbagai kurir terpercaya seperti JNE, J&T, dan Pos Indonesia.</p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="bg-white rounded-2xl p-7 shadow-sm hover:shadow-md transition-shadow group">
+          <div class="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-blue-600 transition-colors">
+            <svg class="w-7 h-7 text-blue-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+          </div>
+          <h3 class="font-bold text-gray-900 text-lg mb-2">Langsung dari UMKM</h3>
+          <p class="text-gray-500 text-sm leading-relaxed">Beli langsung dari tangan pengrajin dan produsen lokal. Produk asli, berkualitas, dan harga lebih bersahabat.</p>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="bg-white rounded-2xl p-7 shadow-sm hover:shadow-md transition-shadow group">
+          <div class="w-14 h-14 bg-purple-100 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-purple-600 transition-colors">
+            <svg class="w-7 h-7 text-purple-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+          </div>
+          <h3 class="font-bold text-gray-900 text-lg mb-2">Dashboard Penjual Lengkap</h3>
+          <p class="text-gray-500 text-sm leading-relaxed">Seller punya dashboard lengkap: statistik penjualan, kelola produk, dan pantau pesanan masuk dengan mudah.</p>
+        </div>
+
+        <!-- Feature 5 -->
+        <div class="bg-white rounded-2xl p-7 shadow-sm hover:shadow-md transition-shadow group">
+          <div class="w-14 h-14 bg-yellow-100 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-yellow-500 transition-colors">
+            <svg class="w-7 h-7 text-yellow-500 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <h3 class="font-bold text-gray-900 text-lg mb-2">Mobile Friendly</h3>
+          <p class="text-gray-500 text-sm leading-relaxed">Desain responsif yang nyaman digunakan di HP, tablet, maupun laptop. Belanja kapan saja dan di mana saja.</p>
+        </div>
+
+        <!-- Feature 6 -->
+        <div class="bg-white rounded-2xl p-7 shadow-sm hover:shadow-md transition-shadow group">
+          <div class="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center mb-5 group-hover:bg-green-600 transition-colors">
+            <svg class="w-7 h-7 text-green-600 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+            </svg>
+          </div>
+          <h3 class="font-bold text-gray-900 text-lg mb-2">Dukung Ekonomi Lokal</h3>
+          <p class="text-gray-500 text-sm leading-relaxed">Setiap pembelian kamu membantu UMKM lokal berkembang. Bersama kita bangun ekonomi Indonesia!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FEATURED PRODUCTS ===== -->
+  <section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-end justify-between mb-10">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-widest text-green-600 mb-2">Produk Pilihan</p>
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900">Lagi Populer 🔥</h2>
+        </div>
+        <a href="buyer/catalog.html" class="text-green-600 hover:text-green-700 text-sm font-semibold flex items-center gap-1 transition-colors">
+          Lihat Semua
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+          </svg>
+        </a>
+      </div>
+
+      <!-- Loading state -->
+      <div id="featured-products">
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+          <!-- Skeleton loaders -->
+          <div class="bg-gray-100 rounded-2xl h-72 animate-pulse"></div>
+          <div class="bg-gray-100 rounded-2xl h-72 animate-pulse delay-100"></div>
+          <div class="bg-gray-100 rounded-2xl h-72 animate-pulse delay-200"></div>
+          <div class="bg-gray-100 rounded-2xl h-72 animate-pulse delay-300"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== HOW IT WORKS ===== -->
+  <section class="py-20 bg-gradient-to-br from-green-50 to-emerald-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-14">
+        <p class="text-xs font-semibold uppercase tracking-widest text-green-600 mb-2">Cara Kerja</p>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900">Belanja di PasarLokal Itu Mudah</h2>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="text-center relative">
+          <div class="w-16 h-16 bg-green-600 text-white rounded-2xl flex items-center justify-center text-2xl font-extrabold mx-auto mb-5 shadow-lg shadow-green-200">1</div>
+          <h3 class="font-bold text-gray-900 mb-2">Daftar Akun</h3>
+          <p class="text-gray-500 text-sm">Buat akun gratis sebagai pembeli atau penjual dalam hitungan detik.</p>
+          <!-- Arrow -->
+          <div class="hidden lg:block absolute top-8 left-full w-full h-0.5 bg-green-200 -translate-x-8 z-0"></div>
+        </div>
+
+        <div class="text-center relative">
+          <div class="w-16 h-16 bg-green-600 text-white rounded-2xl flex items-center justify-center text-2xl font-extrabold mx-auto mb-5 shadow-lg shadow-green-200">2</div>
+          <h3 class="font-bold text-gray-900 mb-2">Pilih Produk</h3>
+          <p class="text-gray-500 text-sm">Browse ribuan produk UMKM lokal dan pilih yang kamu suka.</p>
+          <div class="hidden lg:block absolute top-8 left-full w-full h-0.5 bg-green-200 -translate-x-8 z-0"></div>
+        </div>
+
+        <div class="text-center relative">
+          <div class="w-16 h-16 bg-green-600 text-white rounded-2xl flex items-center justify-center text-2xl font-extrabold mx-auto mb-5 shadow-lg shadow-green-200">3</div>
+          <h3 class="font-bold text-gray-900 mb-2">Bayar dengan Aman</h3>
+          <p class="text-gray-500 text-sm">Checkout dan bayar dengan berbagai metode pembayaran yang aman.</p>
+          <div class="hidden lg:block absolute top-8 left-full w-full h-0.5 bg-green-200 -translate-x-8 z-0"></div>
+        </div>
+
+        <div class="text-center">
+          <div class="w-16 h-16 bg-orange-500 text-white rounded-2xl flex items-center justify-center text-2xl font-extrabold mx-auto mb-5 shadow-lg shadow-orange-200">4</div>
+          <h3 class="font-bold text-gray-900 mb-2">Terima Pesanan</h3>
+          <p class="text-gray-500 text-sm">Produk dikirim langsung ke pintumu. Pantau status pengiriman real-time.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CTA SECTION ===== -->
+  <section class="py-20 bg-gray-900 relative overflow-hidden">
+    <div class="absolute inset-0 pointer-events-none">
+      <div class="absolute top-0 left-1/4 w-72 h-72 bg-green-600/10 rounded-full blur-3xl"></div>
+      <div class="absolute bottom-0 right-1/4 w-72 h-72 bg-orange-500/10 rounded-full blur-3xl"></div>
+    </div>
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
+      <h2 class="text-3xl sm:text-4xl font-extrabold text-white mb-5">
+        Siap Jual Produkmu?<br/>
+        <span class="text-green-400">Bergabung Sekarang!</span>
+      </h2>
+      <p class="text-gray-400 mb-10 text-lg">Daftarkan UMKM-mu secara gratis dan mulai jangkau lebih banyak pelanggan di seluruh Indonesia.</p>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a href="auth/register.html"
+           class="bg-green-600 hover:bg-green-700 text-white font-semibold px-10 py-4 rounded-xl shadow-lg transition-all duration-200 hover:shadow-green-900/40 hover:shadow-xl">
+          Daftar Gratis Sekarang
+        </a>
+        <a href="buyer/catalog.html"
+           class="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold px-10 py-4 rounded-xl transition-all duration-200">
+          Lihat Produk
+        </a>
+      </div>
+
+      <!-- Trust badges -->
+      <div class="flex flex-wrap justify-center gap-6 mt-12">
+        <div class="flex items-center gap-2 text-gray-400 text-sm">
+          <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+          Gratis Selamanya
+        </div>
+        <div class="flex items-center gap-2 text-gray-400 text-sm">
+          <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+          Tanpa Komisi
+        </div>
+        <div class="flex items-center gap-2 text-gray-400 text-sm">
+          <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+          </svg>
+          Setup dalam 2 Menit
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <div id="footer"></div>
+
+  <!-- Scripts -->
+  <script src="assets/js/api.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/utils.js"></script>
+  <script>
+    // Inject navbar & footer
+    utils.injectNavbar();
+    utils.injectFooter();
+
+    // Load featured products
+    async function loadFeaturedProducts() {
+      const container = document.getElementById('featured-products');
+      try {
+        const res = await api.get('/products?per_page=8');
+        const products = res.data?.data || res.data || [];
+
+        if (!products.length) {
+          container.innerHTML = `<div class="col-span-4 py-16 text-center text-gray-400">Belum ada produk tersedia.</div>`;
+          return;
+        }
+
+        container.innerHTML = `
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+            ${products.slice(0, 8).map(p => `
+              <a href="buyer/product-detail.html?id=${p.id}"
+                 class="product-card bg-white rounded-2xl shadow-sm hover:shadow-md border border-gray-100 overflow-hidden group block">
+                <div class="aspect-square overflow-hidden bg-gray-100">
+                  <img
+                    src="${utils.getProductImageUrl(p.image_url)}"
+                    alt="${p.name}"
+                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    onerror="this.src='https://placehold.co/400x400/e8f5e9/2e7d32?text=PasarLokal'"
+                  />
+                </div>
+                <div class="p-4">
+                  <p class="text-xs text-gray-400 mb-1">${utils.getCategoryLabel(p.category)}</p>
+                  <h3 class="font-semibold text-gray-900 text-sm leading-snug mb-2 line-clamp-2">${p.name}</h3>
+                  <div class="flex items-center justify-between">
+                    <span class="text-green-600 font-bold text-base">${utils.formatRupiah(p.price)}</span>
+                    <span class="text-xs text-gray-400">Stok ${p.stock}</span>
+                  </div>
+                </div>
+              </a>
+            `).join('')}
+          </div>
+        `;
+      } catch (err) {
+        // Show demo cards if backend not running
+        container.innerHTML = `
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-5">
+            ${[
+              { emoji: '🍪', name: 'Kue Nastar Spesial', price: 45000, cat: 'Makanan & Minuman', stock: 50 },
+              { emoji: '👜', name: 'Tas Anyaman Bambu', price: 120000, cat: 'Kerajinan Tangan', stock: 15 },
+              { emoji: '🌿', name: 'Teh Herbal Organik', price: 35000, cat: 'Pertanian & Kebun', stock: 100 },
+              { emoji: '👗', name: 'Batik Tulis Solo', price: 285000, cat: 'Fashion & Pakaian', stock: 8 },
+              { emoji: '🍫', name: 'Coklat Edamame', price: 55000, cat: 'Makanan & Minuman', stock: 30 },
+              { emoji: '🏺', name: 'Gerabah Dekoratif', price: 95000, cat: 'Kerajinan Tangan', stock: 20 },
+              { emoji: '🌾', name: 'Beras Organik 5kg', price: 75000, cat: 'Pertanian & Kebun', stock: 45 },
+              { emoji: '🧴', name: 'Sabun Herbal Aloe', price: 28000, cat: 'Lainnya', stock: 60 },
+            ].map((p, i) => `
+              <a href="auth/login.html"
+                 class="product-card bg-white rounded-2xl shadow-sm hover:shadow-md border border-gray-100 overflow-hidden group block">
+                <div class="aspect-square overflow-hidden bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center">
+                  <span class="text-6xl">${p.emoji}</span>
+                </div>
+                <div class="p-4">
+                  <p class="text-xs text-gray-400 mb-1">${p.cat}</p>
+                  <h3 class="font-semibold text-gray-900 text-sm leading-snug mb-2">${p.name}</h3>
+                  <div class="flex items-center justify-between">
+                    <span class="text-green-600 font-bold text-base">${utils.formatRupiah(p.price)}</span>
+                    <span class="text-xs text-gray-400">Stok ${p.stock}</span>
+                  </div>
+                </div>
+              </a>
+            `).join('')}
+          </div>
+          <p class="text-center text-xs text-gray-400 mt-6">* Preview demo — sambungkan ke backend untuk melihat produk nyata</p>
+        `;
+      }
+    }
+
+    loadFeaturedProducts();
+  </script>
+</body>
+</html>
