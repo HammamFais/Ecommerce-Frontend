@@ -1,10 +1,11 @@
 const utils = {
   formatRupiah: (number) => {
+    const num = parseFloat(number) || 0;
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
       currency: 'IDR',
       minimumFractionDigits: 0
-    }).format(number);
+    }).format(num);
   },
 
   formatDate: (dateStr) => {
