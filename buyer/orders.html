@@ -142,7 +142,7 @@
     async function loadOrders() {
       try {
         const res = await api.get('/orders');
-        allOrders = res.data || [];
+        allOrders = res.data?.data || res.data || [];
         if (!allOrders.length) allOrders = DEMO_ORDERS;
       } catch (_) {
         allOrders = DEMO_ORDERS;
