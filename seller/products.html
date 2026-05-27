@@ -467,27 +467,10 @@
           closeModal();
           loadProducts();
         } else {
-          // Demo mode
-          if (editId) {
-            const idx = allProducts.findIndex(p => p.id == editId);
-            if (idx >= 0) allProducts[idx] = { ...allProducts[idx], ...payload };
-          } else {
-            allProducts.unshift({ id: Date.now(), ...payload, image_url: null });
-          }
-          utils.showToast(editId ? 'Produk berhasil diperbarui! (demo)' : 'Produk berhasil ditambahkan! (demo)', 'success');
-          closeModal();
-          filterAndRender();
+          utils.showToast(res.message || 'Gagal menyimpan produk', 'error');
         }
       } catch (_) {
-        if (editId) {
-          const idx = allProducts.findIndex(p => p.id == editId);
-          if (idx >= 0) allProducts[idx] = { ...allProducts[idx], ...payload };
-        } else {
-          allProducts.unshift({ id: Date.now(), ...payload, image_url: null });
-        }
-        utils.showToast(editId ? 'Produk diperbarui (demo)' : 'Produk ditambahkan (demo)', 'success');
-        closeModal();
-        filterAndRender();
+        utils.showToast('Gagal menyimpan produk. Coba lagi.', 'error');
       } finally {
         saveBtn.disabled = false;
         saveText.textContent = editId ? 'Perbarui Produk' : 'Simpan Produk';
