@@ -105,7 +105,7 @@ const utils = {
   getProductImageUrl: (url) => {
     if (!url) return 'https://placehold.co/400x300/e8f5e9/2e7d32?text=PasarLokal';
     if (url.startsWith('http')) return url;
-    return `http://localhost:8000/storage/${url}`;
+    return `https://ecommerce-backend-production-afa6.up.railway.app/storage/${url}`;
   },
 
   debounce: (fn, delay = 400) => {
