@@ -489,10 +489,12 @@
               setTimeout(() => window.location.href = 'orders.html', 1000);
             },
             onError: () => {
-              utils.showToast('Pembayaran gagal. Silakan coba lagi.', 'error');
+              utils.showToast('Pembayaran gagal. Selesaikan pembayaran di Pesanan Saya.', 'error');
+              setTimeout(() => window.location.href = 'orders.html', 1500);
             },
             onClose: () => {
-              utils.showToast('Pembayaran dibatalkan', 'warning');
+              utils.showToast('Pembayaran dibatalkan. Selesaikan pembayaran di Pesanan Saya.', 'warning');
+              setTimeout(() => window.location.href = 'orders.html', 1500);
             }
           });
         } else {
