@@ -37,7 +37,7 @@ const auth = {
   },
 
   register: async (name, email, password, role) => {
-    return await api.post('/auth/register', { name, email, password, role });
+    return await api.post('/auth/register', { name, email, password, password_confirmation: password, role });
   },
 
   requireAuth: (allowedRoles = []) => {
