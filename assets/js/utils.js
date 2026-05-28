@@ -126,22 +126,59 @@ const utils = {
     const role = auth.getRole();
     const user = auth.getUser();
 
-    const navLinks = isLoggedIn
-      ? role === 'seller'
-        ? `<a href="/seller/dashboard.html" class="nav-link ${activePage === 'dashboard' ? 'text-green-600 font-semibold' : 'text-gray-600 hover:text-green-600'}">Dashboard</a>
-           <a href="/seller/products.html" class="nav-link ${activePage === 'products' ? 'text-green-600 font-semibold' : 'text-gray-600 hover:text-green-600'}">Produk Saya</a>
-           <a href="/seller/orders.html" class="nav-link ${activePage === 'orders' ? 'text-green-600 font-semibold' : 'text-gray-600 hover:text-green-600'}">Pesanan</a>`
-        : `<a href="/buyer/catalog.html" class="nav-link ${activePage === 'catalog' ? 'text-green-600 font-semibold' : 'text-gray-600 hover:text-green-600'}">Katalog</a>
-           <a href="/buyer/cart.html" class="nav-link relative ${activePage === 'cart' ? 'text-green-600 font-semibold' : 'text-gray-600 hover:text-green-600'}">
-             Keranjang
-           </a>
-           <a href="/buyer/orders.html" class="nav-link ${activePage === 'orders' ? 'text-green-600 font-semibold' : 'text-gray-600 hover:text-green-600'}">Pesanan Saya</a>`
-      : `<a href="/buyer/catalog.html" class="text-gray-600 hover:text-green-600 transition-colors">Katalog</a>`;
+    // Desktop + mobile dropdown links
+    const sellerLinks = [
+      { href: '/seller/dashboard.html', page: 'dashboard', label: 'Dashboard',    icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>' },
+      { href: '/seller/products.html', page: 'products',  label: 'Produk Saya',  icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>' },
+      { href: '/seller/orders.html',   page: 'orders',    label: 'Pesanan',      icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>' },
+    ];
+    const buyerLinks = [
+      { href: '/buyer/catalog.html',   page: 'catalog',   label: 'Katalog',      icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>' },
+      { href: '/buyer/cart.html',      page: 'cart',      label: 'Keranjang',    icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>' },
+      { href: '/buyer/orders.html',    page: 'orders',    label: 'Pesanan Saya', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>' },
+    ];
+    const guestLinks = [
+      { href: '/buyer/catalog.html',   page: 'catalog',   label: 'Katalog',      icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>' },
+    ];
+
+    const links = isLoggedIn ? (role === 'seller' ? sellerLinks : buyerLinks) : guestLinks;
+
+    const desktopLinks = links.map(l =>
+      `<a href="${l.href}" class="nav-link text-sm font-medium transition-colors ${activePage === l.page ? 'text-green-600 font-semibold' : 'text-gray-600 hover:text-green-600'}">${l.label}</a>`
+    ).join('');
+
+    const mobileMenuLinks = links.map(l =>
+      `<a href="${l.href}" class="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${activePage === l.page ? 'text-green-600 bg-green-50 font-semibold' : 'text-gray-700 hover:bg-gray-50'}">
+        <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">${l.icon}</svg>
+        ${l.label}
+      </a>`
+    ).join('');
+
+    // Bottom nav (mobile only, logged in)
+    const bottomNav = isLoggedIn ? `
+      <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-gray-200 flex">
+        ${links.map(l => `
+          <a href="${l.href}" class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 transition-colors ${activePage === l.page ? 'text-green-600' : 'text-gray-400 hover:text-gray-600'}">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">${l.icon}</svg>
+            <span class="text-[10px] font-medium leading-tight">${l.label}</span>
+          </a>
+        `).join('')}
+        <button onclick="auth.logout()" class="flex-1 flex flex-col items-center justify-center py-2 gap-0.5 text-gray-400 hover:text-red-500 transition-colors">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+          <span class="text-[10px] font-medium leading-tight">Keluar</span>
+        </button>
+      </nav>
+      <div class="md:hidden h-16"></div>` : '';
 
     const authButtons = isLoggedIn
-      ? `<div class="flex items-center gap-3">
+      ? `<div class="flex items-center gap-2">
            <span class="text-sm text-gray-500 hidden sm:block">Halo, <strong class="text-gray-800">${user?.name || 'User'}</strong></span>
-           <button onclick="auth.logout()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors">Keluar</button>
+           <button onclick="auth.logout()" class="hidden md:block bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors">Keluar</button>
+           <button id="hamburger-btn" class="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors" aria-label="Menu">
+             <svg id="hamburger-icon" class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+             </svg>
+           </button>
          </div>`
       : `<div class="flex items-center gap-2">
            <a href="/auth/login.html" class="text-green-600 font-medium text-sm hover:text-green-700 px-3 py-2">Masuk</a>
@@ -158,13 +195,45 @@ const utils = {
               </div>
               <span class="font-bold text-lg text-gray-900">Pasar<span class="text-green-600">Lokal</span></span>
             </a>
-            <div class="hidden md:flex items-center gap-6 text-sm font-medium">
-              ${navLinks}
+            <div class="hidden md:flex items-center gap-6">
+              ${desktopLinks}
             </div>
             ${authButtons}
           </div>
         </div>
+
+        <!-- Mobile dropdown menu -->
+        <div id="mobile-menu" class="hidden md:hidden border-t border-gray-100 bg-white px-4 py-3 space-y-1 shadow-lg">
+          ${mobileMenuLinks}
+          ${isLoggedIn ? `
+          <div class="pt-2 mt-2 border-t border-gray-100">
+            <div class="px-4 py-2 text-xs text-gray-400">Masuk sebagai <strong class="text-gray-600">${user?.name || 'User'}</strong></div>
+            <button onclick="auth.logout()" class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition-colors">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+              Keluar
+            </button>
+          </div>` : ''}
+        </div>
       </nav>
+
+      ${bottomNav}
+
+      <script>
+        (function() {
+          const btn = document.getElementById('hamburger-btn');
+          const menu = document.getElementById('mobile-menu');
+          if (!btn || !menu) return;
+          btn.addEventListener('click', function() {
+            const isOpen = !menu.classList.contains('hidden');
+            menu.classList.toggle('hidden', isOpen);
+          });
+          document.addEventListener('click', function(e) {
+            if (!btn.contains(e.target) && !menu.contains(e.target)) {
+              menu.classList.add('hidden');
+            }
+          });
+        })();
+      </script>
     `;
   },
 
