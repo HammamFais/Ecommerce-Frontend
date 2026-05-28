@@ -258,24 +258,21 @@ const utils = {
       }
     });
 
-    // Scroll effect: transparent when scrolled, white at top
+    // Scroll effect: glassmorphism when scrolled, white at top
     const navbar = document.getElementById('main-navbar');
-    const navbarInner = navbar ? navbar.querySelector('div') : null;
     const onScroll = () => {
       if (window.scrollY > 10) {
-        navbar.style.backgroundColor = 'transparent';
-        navbar.style.backdropFilter = 'none';
-        navbar.style.webkitBackdropFilter = 'none';
-        navbar.style.boxShadow = 'none';
-        navbar.style.borderBottom = 'none';
-        if (navbarInner) navbarInner.style.filter = 'drop-shadow(0 1px 3px rgba(0,0,0,0.25))';
+        navbar.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
+        navbar.style.backdropFilter = 'blur(24px) saturate(180%)';
+        navbar.style.webkitBackdropFilter = 'blur(24px) saturate(180%)';
+        navbar.style.boxShadow = '0 1px 0 rgba(0,0,0,0.06)';
+        navbar.style.borderBottom = '1px solid rgba(255,255,255,0.4)';
       } else {
         navbar.style.backgroundColor = 'rgb(255, 255, 255)';
         navbar.style.backdropFilter = 'none';
         navbar.style.webkitBackdropFilter = 'none';
         navbar.style.boxShadow = 'none';
         navbar.style.borderBottom = 'none';
-        if (navbarInner) navbarInner.style.filter = 'none';
       }
     };
     window.addEventListener('scroll', onScroll, { passive: true });
