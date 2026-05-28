@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pesanan Saya — PasarLokal</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="Mid-client-N9TCfKVME66aCBLa"></script>
   <link rel="stylesheet" href="../assets/css/custom.css" />
   <script>
     tailwind.config = {
@@ -370,17 +371,31 @@
     });
 
     async function retryPayment(orderId) {
+      const btn = document.querySelector(`button[onclick="retryPayment('${orderId}')"]`);
+      const originalText = btn ? btn.textContent : '';
+      if (btn) { btn.disabled = true; btn.textContent = 'Memuat...'; }
+
       try {
         const res = await api.post(`/payment/${orderId}`, {});
-        if (res.success && res.data?.snap_token && typeof snap !== 'undefined') {
-          snap.pay(res.data.snap_token, {
-            onSuccess: () => { utils.showToast('Pembayaran berhasil! 🎉', 'success'); loadOrders(); },
-            onPending: () => utils.showToast('Menunggu konfirmasi pembayaran...', 'info'),
+        if (!res.success) throw new Error(res.message || 'Gagal mendapatkan token pembayaran');
+
+        const snapToken = res.data?.snap_token;
+        if (!snapToken) throw new Error('Token pembayaran tidak ditemukan');
+
+        if (typeof snap !== 'undefined') {
+          snap.pay(snapToken, {
+            onSuccess: () => { utils.showToast('Pembayaran berhasil!', 'success'); loadOrders(); },
+            onPending: () => { utils.showToast('Menunggu konfirmasi pembayaran...', 'info'); loadOrders(); },
             onError: () => utils.showToast('Pembayaran gagal. Coba lagi.', 'error'),
+            onClose: () => utils.showToast('Pembayaran dibatalkan', 'warning'),
           });
+        } else {
+          utils.showToast('Gagal memuat halaman pembayaran. Coba refresh halaman.', 'error');
         }
-      } catch (_) {
-        utils.showToast('Gagal membuka halaman pembayaran', 'error');
+      } catch (err) {
+        utils.showToast(err.message || 'Gagal membuka halaman pembayaran', 'error');
+      } finally {
+        if (btn) { btn.disabled = false; btn.textContent = originalText; }
       }
     }
 
