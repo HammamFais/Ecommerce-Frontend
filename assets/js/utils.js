@@ -188,7 +188,7 @@ const utils = {
          </div>`;
 
     return `
-      <nav class="bg-white shadow-sm sticky top-0 z-40 border-b border-gray-100">
+      <nav id="main-navbar" class="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-100 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div class="flex items-center justify-between h-16">
             <a href="/index.html" class="flex items-center gap-2">
@@ -257,6 +257,23 @@ const utils = {
         closeMenu();
       }
     });
+
+    // Scroll effect: backdrop blur + shadow when scrolled
+    const navbar = document.getElementById('main-navbar');
+    const onScroll = () => {
+      if (window.scrollY > 10) {
+        navbar.classList.add('bg-white/90', 'backdrop-blur-md', 'shadow-sm');
+        navbar.classList.remove('bg-white');
+      } else {
+        navbar.classList.remove('bg-white/90', 'backdrop-blur-md', 'shadow-sm');
+        navbar.classList.add('bg-white');
+      }
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+
+    // Offset body so content is not hidden under fixed navbar
+    document.body.classList.add('pt-16');
   },
 
   injectFooter: () => {
