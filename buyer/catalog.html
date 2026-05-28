@@ -206,7 +206,10 @@
       try {
         const res = await api.get(endpoint);
         if (res.success || res.data) {
-          const data = res.data?.data || res.data || [];
+          let data = res.data?.data || res.data || [];
+          // Client-side price filter as fallback if API doesn't support it
+          if (priceMin) data = data.filter(p => p.price >= Number(priceMin));
+          if (priceMax) data = data.filter(p => p.price <= Number(priceMax));
           products = data;
           total = res.data?.total || data.length;
           lastPage = res.data?.last_page || 1;
