@@ -317,11 +317,13 @@
     document.getElementById('btn-delete-selected').addEventListener('click', async () => {
       const checked = [...document.querySelectorAll('.item-checkbox:checked')];
       const ids = checked.map(cb => parseInt(cb.dataset.id));
+      const deletedItems = cartItems.filter(i => ids.includes(i.id));
+      const totalQty = deletedItems.reduce((sum, i) => sum + i.quantity, 0);
       for (const id of ids) {
         try { await api.delete(`/cart/${id}`); } catch (_) {}
       }
       cartItems = cartItems.filter(i => !ids.includes(i.id));
-      utils.showToast(`${ids.length} item dihapus`, 'success');
+      utils.showToast(`${totalQty} produk berhasil dihapus dari keranjang`, 'success');
       if (!cartItems.length) {
         document.getElementById('cart-content').classList.add('hidden');
         document.getElementById('cart-empty').classList.remove('hidden');
