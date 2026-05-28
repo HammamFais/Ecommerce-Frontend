@@ -222,7 +222,11 @@
                   Lihat Detail
                 </button>
                 ${order.status === 'pending'
-                  ? `<button onclick="retryPayment('${order.id}')"
+                  ? `<button onclick="cancelOrder('${order.id}')"
+                       class="flex-1 py-2 border border-red-200 text-red-500 hover:bg-red-50 rounded-xl text-sm font-semibold transition-colors">
+                       Batalkan
+                     </button>
+                     <button onclick="retryPayment('${order.id}')"
                        class="flex-1 py-2 bg-orange-500 hover:bg-orange-600 rounded-xl text-sm font-semibold text-white transition-colors">
                        Bayar Sekarang
                      </button>`
@@ -357,6 +361,12 @@
             <span>Tanggal pesanan</span>
             <span>${utils.formatDate(order.created_at)}</span>
           </div>
+
+          ${order.notes ? `
+          <div class="bg-amber-50 border border-amber-100 rounded-xl p-4">
+            <p class="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-1">Catatan Pesanan</p>
+            <p class="text-sm text-amber-900">${order.notes}</p>
+          </div>` : ''}
         </div>
       `;
 
@@ -397,6 +407,27 @@
       } finally {
         if (btn) { btn.disabled = false; btn.textContent = originalText; }
       }
+    }
+
+    async function cancelOrder(orderId) {
+      if (!confirm('Yakin ingin membatalkan pesanan ini?')) return;
+
+      const btn = document.querySelector(`button[onclick="cancelOrder('${orderId}')"]`);
+      if (btn) { btn.disabled = true; btn.textContent = 'Membatalkan...'; }
+
+      try {
+        const res = await api.put(`/orders/${orderId}/cancel`, {});
+        if (res.success || res.data) {
+          utils.showToast('Pesanan berhasil dibatalkan', 'success');
+        } else {
+          throw new Error(res.message || 'Gagal membatalkan pesanan');
+        }
+      } catch (err) {
+        utils.showToast(err.message || 'Gagal membatalkan pesanan', 'error');
+        if (btn) { btn.disabled = false; btn.textContent = 'Batalkan'; }
+        return;
+      }
+      loadOrders();
     }
 
     loadOrders();
