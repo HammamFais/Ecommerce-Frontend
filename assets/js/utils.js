@@ -258,8 +258,6 @@ const utils = {
       }
     });
 
-    // Offset body so content is not hidden under fixed navbar
-    document.body.classList.add('pt-16');
   },
 
   injectFooter: () => {
