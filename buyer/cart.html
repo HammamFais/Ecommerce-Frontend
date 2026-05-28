@@ -127,7 +127,7 @@
       </div>
       <div>
         <h3 class="font-bold text-gray-900">Hapus dari Keranjang?</h3>
-        <p class="text-sm text-gray-500 mt-1">Item ini akan dihapus dari keranjang belanjamu.</p>
+        <p id="modal-delete-message" class="text-sm text-gray-500 mt-1">Item ini akan dihapus dari keranjang belanjamu.</p>
       </div>
       <div class="flex gap-3">
         <button id="modal-cancel" class="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">Batal</button>
@@ -152,6 +152,7 @@
 
     let cartItems = [];
     let pendingDeleteId = null;
+    let pendingDeleteIds = null;
 
     async function loadCart() {
       try {
@@ -286,6 +287,8 @@
     // Delete modal
     function confirmDelete(cartId) {
       pendingDeleteId = cartId;
+      pendingDeleteIds = null;
+      document.getElementById('modal-delete-message').textContent = 'Item ini akan dihapus dari keranjang belanjamu.';
       document.getElementById('modal-delete').classList.remove('hidden');
     }
 
@@ -298,13 +301,26 @@
 
     document.getElementById('modal-confirm').addEventListener('click', async () => {
       document.getElementById('modal-delete').classList.add('hidden');
-      if (pendingDeleteId === null) return;
-      try {
-        await api.delete(`/cart/${pendingDeleteId}`);
-      } catch (_) {}
-      cartItems = cartItems.filter(i => i.id !== pendingDeleteId);
-      pendingDeleteId = null;
-      utils.showToast('Item dihapus dari keranjang', 'success');
+
+      if (pendingDeleteIds !== null) {
+        // Hapus terpilih
+        const ids = pendingDeleteIds;
+        const deletedItems = cartItems.filter(i => ids.includes(i.id));
+        const totalQty = deletedItems.reduce((sum, i) => sum + i.quantity, 0);
+        for (const id of ids) {
+          try { await api.delete(`/cart/${id}`); } catch (_) {}
+        }
+        cartItems = cartItems.filter(i => !ids.includes(i.id));
+        pendingDeleteIds = null;
+        utils.showToast(`${totalQty} produk berhasil dihapus dari keranjang`, 'success');
+      } else if (pendingDeleteId !== null) {
+        // Hapus satuan
+        try { await api.delete(`/cart/${pendingDeleteId}`); } catch (_) {}
+        cartItems = cartItems.filter(i => i.id !== pendingDeleteId);
+        pendingDeleteId = null;
+        utils.showToast('Item dihapus dari keranjang', 'success');
+      }
+
       if (!cartItems.length) {
         document.getElementById('cart-content').classList.add('hidden');
         document.getElementById('cart-empty').classList.remove('hidden');
@@ -313,23 +329,18 @@
       }
     });
 
-    // Delete selected
-    document.getElementById('btn-delete-selected').addEventListener('click', async () => {
+    // Delete selected — tampilkan modal konfirmasi dulu
+    document.getElementById('btn-delete-selected').addEventListener('click', () => {
       const checked = [...document.querySelectorAll('.item-checkbox:checked')];
       const ids = checked.map(cb => parseInt(cb.dataset.id));
+      if (!ids.length) return;
       const deletedItems = cartItems.filter(i => ids.includes(i.id));
       const totalQty = deletedItems.reduce((sum, i) => sum + i.quantity, 0);
-      for (const id of ids) {
-        try { await api.delete(`/cart/${id}`); } catch (_) {}
-      }
-      cartItems = cartItems.filter(i => !ids.includes(i.id));
-      utils.showToast(`${totalQty} produk berhasil dihapus dari keranjang`, 'success');
-      if (!cartItems.length) {
-        document.getElementById('cart-content').classList.add('hidden');
-        document.getElementById('cart-empty').classList.remove('hidden');
-      } else {
-        renderCart();
-      }
+      pendingDeleteIds = ids;
+      pendingDeleteId = null;
+      document.getElementById('modal-delete-message').textContent =
+        `${totalQty} produk akan dihapus dari keranjang. Lanjutkan?`;
+      document.getElementById('modal-delete').classList.remove('hidden');
     });
 
     // Checkout
