@@ -262,11 +262,15 @@ const utils = {
     const navbar = document.getElementById('main-navbar');
     const onScroll = () => {
       if (window.scrollY > 10) {
-        navbar.classList.add('bg-white/90', 'backdrop-blur-md', 'shadow-sm');
-        navbar.classList.remove('bg-white');
+        navbar.style.backgroundColor = 'rgba(255, 255, 255, 0.85)';
+        navbar.style.backdropFilter = 'blur(12px)';
+        navbar.style.webkitBackdropFilter = 'blur(12px)';
+        navbar.style.boxShadow = '0 1px 8px rgba(0,0,0,0.08)';
       } else {
-        navbar.classList.remove('bg-white/90', 'backdrop-blur-md', 'shadow-sm');
-        navbar.classList.add('bg-white');
+        navbar.style.backgroundColor = 'rgb(255, 255, 255)';
+        navbar.style.backdropFilter = 'none';
+        navbar.style.webkitBackdropFilter = 'none';
+        navbar.style.boxShadow = 'none';
       }
     };
     window.addEventListener('scroll', onScroll, { passive: true });
