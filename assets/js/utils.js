@@ -258,32 +258,6 @@ const utils = {
       }
     });
 
-    // Scroll effect: glassmorphism on mobile only (< 768px), always white on desktop
-    const navbar = document.getElementById('main-navbar');
-    const isMobile = () => window.innerWidth < 768;
-    const resetNavbar = () => {
-      navbar.style.backgroundColor = 'rgb(255, 255, 255)';
-      navbar.style.backdropFilter = 'none';
-      navbar.style.webkitBackdropFilter = 'none';
-      navbar.style.boxShadow = 'none';
-      navbar.style.borderBottom = 'none';
-    };
-    const onScroll = () => {
-      if (isMobile() && window.scrollY > 10) {
-        navbar.style.backgroundColor = 'rgba(255, 255, 255, 0.5)';
-        navbar.style.backdropFilter = 'blur(24px) saturate(180%)';
-        navbar.style.webkitBackdropFilter = 'blur(24px) saturate(180%)';
-        navbar.style.boxShadow = '0 1px 0 rgba(0,0,0,0.06)';
-        navbar.style.borderBottom = '1px solid rgba(255,255,255,0.4)';
-      } else {
-        resetNavbar();
-      }
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    // Reset to white when resizing back to desktop
-    window.addEventListener('resize', onScroll, { passive: true });
-    onScroll();
-
     // Offset body so content is not hidden under fixed navbar
     document.body.classList.add('pt-16');
   },
