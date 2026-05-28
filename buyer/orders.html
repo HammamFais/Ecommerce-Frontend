@@ -456,7 +456,7 @@
       if (btn) { btn.disabled = true; btn.textContent = 'Membatalkan...'; }
 
       try {
-        const res = await api.put(`/orders/${orderId}`, { status: 'cancelled' });
+        const res = await api.put(`/orders/${orderId}/cancel`, {});
         if (res.success || res.data) {
           utils.showToast('Pesanan berhasil dibatalkan', 'success');
           loadOrders();
