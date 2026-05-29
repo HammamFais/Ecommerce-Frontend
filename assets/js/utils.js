@@ -168,7 +168,8 @@ const utils = {
       ? `<div class="flex items-center gap-2">
            ${role === 'buyer'
              ? `<a href="/buyer/profile.html" class="text-sm text-gray-500 hidden sm:block hover:text-green-600 transition-colors">Halo, <strong class="text-gray-800">${user?.name || 'User'}</strong></a>`
-             : `<span class="text-sm text-gray-500 hidden sm:block">Halo, <strong class="text-gray-800">${user?.name || 'User'}</strong></span>`
+             : `<span class="text-sm text-gray-500 hidden sm:block">Halo, <strong class="text-gray-800">${user?.name || 'User'}</strong></span>
+                <button onclick="auth.logout()" class="text-sm font-medium text-red-500 hover:text-red-600 border border-red-200 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors hidden sm:block">Keluar</button>`
            }
            <div class="relative md:hidden">
              <button id="hamburger-btn" class="p-2 rounded-lg hover:bg-gray-100 transition-colors" aria-label="Menu" aria-expanded="false">
