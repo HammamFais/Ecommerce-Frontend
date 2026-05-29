@@ -212,7 +212,7 @@
                 <!-- Product image -->
                 <div class="w-16 h-16 rounded-xl bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center flex-shrink-0 text-3xl">
                   ${firstItem?.product?.image_url
-                    ? `<img src="${utils.getProductImageUrl(firstItem.product.image_url)}" class="w-full h-full object-cover rounded-xl">`
+                    ? '<img src="' + utils.getProductImageUrl(firstItem.product.image_url) + '" class="w-full h-full object-cover rounded-xl">'
                     : DEMO_EMOJIS[firstItem?.product?.category] || '📦'
                   }
                 </div>
@@ -220,7 +220,7 @@
                 <!-- Info -->
                 <div class="flex-1 min-w-0">
                   <p class="font-semibold text-gray-900 truncate">${firstItem?.product?.name || '-'}</p>
-                  ${moreCount > 0 ? `<p class="text-xs text-gray-400 mt-0.5">+${moreCount} produk lainnya</p>` : ''}
+                  ${moreCount > 0 ? '<p class="text-xs text-gray-400 mt-0.5">+' + moreCount + ' produk lainnya</p>' : ''}
                   <p class="text-xs text-gray-400 mt-0.5">Dari: ${order.seller?.name || 'UMKM Lokal'}</p>
                   <p class="text-xs text-gray-400">Kurir: ${(order.courier || 'JNE REG').toUpperCase()}</p>
                 </div>
