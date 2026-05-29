@@ -474,9 +474,11 @@
           updateLocalOrder(pendingUpdateId, pendingNewStatus);
           utils.showToast(`Status diperbarui (demo)`, 'success');
         }
+        utils.updateSellerOrderBadge();
       } catch (_) {
         updateLocalOrder(pendingUpdateId, pendingNewStatus);
         utils.showToast(`Status diperbarui (demo)`, 'success');
+        utils.updateSellerOrderBadge();
       } finally {
         confirmBtn.disabled = false;
         confirmText.textContent = 'Update Status';

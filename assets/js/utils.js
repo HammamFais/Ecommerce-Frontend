@@ -312,7 +312,7 @@ const utils = {
     try {
       const res = await api.get('/seller/orders');
       const orders = res.data?.data || [];
-      const total = orders.filter(o => o.status === 'paid').length;
+      const total = orders.filter(o => o.status === 'paid' || o.status === 'shipped').length;
       const label = total >= 10 ? '9+' : String(total);
       [badgeDesktop, badgeMobile].forEach(b => {
         if (!b) return;
