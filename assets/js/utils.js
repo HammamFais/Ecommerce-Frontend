@@ -93,7 +93,7 @@ const utils = {
 
   getCategoryLabel: (cat) => {
     const map = {
-      makanan: 'Makanan & Minuman',
+      makanan: 'Makanan',
       minuman: 'Minuman',
       kerajinan: 'Kerajinan Tangan',
       fashion: 'Fashion & Pakaian',
