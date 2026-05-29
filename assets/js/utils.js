@@ -133,12 +133,12 @@ const utils = {
     const sellerLinks = [
       { href: '/seller/dashboard.html', page: 'dashboard', label: 'Dashboard',   icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>' },
       { href: '/seller/products.html', page: 'products',  label: 'Produk Saya', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>' },
-      { href: '/seller/orders.html',   page: 'orders',    label: 'Pesanan',     icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>' },
+      { href: '/seller/orders.html',   page: 'orders',    label: 'Pesanan',     icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>', badge: true, badgeId: 'order-badge' },
       { href: '/seller/profile.html', page: 'profile',   label: 'Profil Saya', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>' },
     ];
     const buyerLinks = [
       { href: '/buyer/catalog.html', page: 'catalog', label: 'Katalog',      icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>' },
-      { href: '/buyer/cart.html',    page: 'cart',    label: 'Keranjang',    icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>', badge: true },
+      { href: '/buyer/cart.html',    page: 'cart',    label: 'Keranjang',    icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>', badge: true, badgeId: 'cart-badge' },
       { href: '/buyer/orders.html',  page: 'orders',  label: 'Pesanan Saya', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>' },
       { href: '/buyer/profile.html', page: 'profile', label: 'Profil Saya',  icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>' },
     ];
@@ -151,7 +151,7 @@ const utils = {
     const desktopLinks = links.map(l =>
       `<a href="${l.href}" class="nav-link relative text-sm font-medium transition-colors ${activePage === l.page ? 'text-green-600 font-semibold' : 'text-gray-600 hover:text-green-600'}">
         ${l.label}
-        ${l.badge ? '<span id="cart-badge-desktop" class="hidden absolute -top-2 -right-3 bg-red-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 leading-none"></span>' : ''}
+        ${l.badge ? `<span id="${l.badgeId}-desktop" class="hidden absolute -top-2 -right-3 bg-red-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 leading-none"></span>` : ''}
       </a>`
     ).join('');
 
@@ -159,7 +159,7 @@ const utils = {
       <a href="${l.href}" class="flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-lg transition-colors ${activePage === l.page ? 'text-green-600 bg-green-50' : 'text-gray-700 hover:bg-gray-50'}">
         <span class="relative flex-shrink-0">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">${l.icon}</svg>
-          ${l.badge ? '<span id="cart-badge-mobile" class="hidden absolute -top-1.5 -right-1.5 bg-red-500 text-white text-xs font-bold rounded-full min-w-[14px] h-[14px] flex items-center justify-center px-0.5 leading-none"></span>' : ''}
+          ${l.badge ? `<span id="${l.badgeId}-mobile" class="hidden absolute -top-1.5 -right-1.5 bg-red-500 text-white text-xs font-bold rounded-full min-w-[14px] h-[14px] flex items-center justify-center px-0.5 leading-none"></span>` : ''}
         </span>
         ${l.label}
       </a>`
@@ -277,6 +277,9 @@ const utils = {
     if (auth.isLoggedIn() && auth.getRole() === 'buyer') {
       utils.updateCartBadge();
     }
+    if (auth.isLoggedIn() && auth.getRole() === 'seller') {
+      utils.updateSellerOrderBadge();
+    }
   },
 
   updateCartBadge: async () => {
@@ -288,6 +291,28 @@ const utils = {
       const res = await api.get('/cart');
       const items = res.data || res.cart || [];
       const total = items.reduce((sum, item) => sum + (item.quantity || 1), 0);
+      const label = total >= 10 ? '9+' : String(total);
+      [badgeDesktop, badgeMobile].forEach(b => {
+        if (!b) return;
+        if (total > 0) {
+          b.textContent = label;
+          b.classList.remove('hidden');
+        } else {
+          b.classList.add('hidden');
+        }
+      });
+    } catch (_) {}
+  },
+
+  updateSellerOrderBadge: async () => {
+    const badgeDesktop = document.getElementById('order-badge-desktop');
+    const badgeMobile  = document.getElementById('order-badge-mobile');
+    if (!badgeDesktop && !badgeMobile) return;
+
+    try {
+      const res = await api.get('/seller/orders?status=dibayar');
+      const items = res.data || res.orders || [];
+      const total = Array.isArray(items) ? items.length : 0;
       const label = total >= 10 ? '9+' : String(total);
       [badgeDesktop, badgeMobile].forEach(b => {
         if (!b) return;
