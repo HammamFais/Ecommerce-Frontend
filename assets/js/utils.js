@@ -139,6 +139,7 @@ const utils = {
       { href: '/buyer/catalog.html', page: 'catalog', label: 'Katalog',      icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>' },
       { href: '/buyer/cart.html',    page: 'cart',    label: 'Keranjang',    icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>', badge: true },
       { href: '/buyer/orders.html',  page: 'orders',  label: 'Pesanan Saya', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>' },
+      { href: '/buyer/profile.html', page: 'profile', label: 'Profil Saya',  icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>' },
     ];
     const guestLinks = [
       { href: '/buyer/catalog.html', page: 'catalog', label: 'Katalog', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>' },
@@ -165,7 +166,10 @@ const utils = {
 
     const authButtons = isLoggedIn
       ? `<div class="flex items-center gap-2">
-           <span class="text-sm text-gray-500 hidden sm:block">Halo, <strong class="text-gray-800">${user?.name || 'User'}</strong></span>
+           ${role === 'buyer'
+             ? `<a href="/buyer/profile.html" class="text-sm text-gray-500 hidden sm:block hover:text-green-600 transition-colors">Halo, <strong class="text-gray-800">${user?.name || 'User'}</strong></a>`
+             : `<span class="text-sm text-gray-500 hidden sm:block">Halo, <strong class="text-gray-800">${user?.name || 'User'}</strong></span>`
+           }
            <button onclick="auth.logout()" class="hidden md:block bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors">Keluar</button>
            <div class="relative md:hidden">
              <button id="hamburger-btn" class="p-2 rounded-lg hover:bg-gray-100 transition-colors" aria-label="Menu" aria-expanded="false">
