@@ -282,6 +282,7 @@
       } catch (_) {}
       item.quantity = newQty;
       renderCart();
+      utils.updateCartBadge();
     }
 
     // Delete modal
@@ -313,12 +314,14 @@
         cartItems = cartItems.filter(i => !ids.includes(i.id));
         pendingDeleteIds = null;
         utils.showToast(`${totalQty} produk berhasil dihapus dari keranjang`, 'success');
+        utils.updateCartBadge();
       } else if (pendingDeleteId !== null) {
         // Hapus satuan
         try { await api.delete(`/cart/${pendingDeleteId}`); } catch (_) {}
         cartItems = cartItems.filter(i => i.id !== pendingDeleteId);
         pendingDeleteId = null;
         utils.showToast('Item dihapus dari keranjang', 'success');
+        utils.updateCartBadge();
       }
 
       if (!cartItems.length) {
