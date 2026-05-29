@@ -179,7 +179,8 @@
       const match = Array.from(citySelect.options).find(o => o.value === (user.city || ''));
       if (match) {
         citySelect.value = match.value;
-        document.getElementById('field-city-id').value = match.dataset.cityId || '';
+        document.getElementById('field-city-id').value  = match.dataset.cityId  || '';
+        document.getElementById('field-province').value = match.dataset.province || user.province || '';
       }
     }
 
@@ -193,7 +194,8 @@
           data.data.forEach(city => {
             const opt = document.createElement('option');
             opt.value = city.city_name;
-            opt.dataset.cityId = city.city_id;
+            opt.dataset.cityId  = city.city_id;
+            opt.dataset.province = city.province;
             opt.textContent = `${city.city_name} — ${city.province}`;
             select.appendChild(opt);
           });
@@ -205,7 +207,8 @@
 
     document.getElementById('field-city').addEventListener('change', function () {
       const selected = this.options[this.selectedIndex];
-      document.getElementById('field-city-id').value = selected.dataset.cityId || '';
+      document.getElementById('field-city-id').value  = selected.dataset.cityId  || '';
+      document.getElementById('field-province').value = selected.dataset.province || '';
     });
 
     async function loadProfile() {
