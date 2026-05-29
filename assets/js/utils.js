@@ -148,22 +148,28 @@ const utils = {
 
     const links = isLoggedIn ? (role === 'seller' ? sellerLinks : buyerLinks) : guestLinks;
 
-    const desktopLinks = links.map(l =>
-      `<a href="${l.href}" class="nav-link relative text-sm font-medium transition-colors ${activePage === l.page ? 'text-green-600 font-semibold' : 'text-gray-600 hover:text-green-600'}">
+    const desktopLinks = links.map(l => {
+      const badgeHtml = l.badge
+        ? '<span id="' + l.badgeId + '-desktop" class="hidden absolute -top-2 -right-3 bg-red-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 leading-none"></span>'
+        : '';
+      return `<a href="${l.href}" class="nav-link relative text-sm font-medium transition-colors ${activePage === l.page ? 'text-green-600 font-semibold' : 'text-gray-600 hover:text-green-600'}">
         ${l.label}
-        ${l.badge ? `<span id="${l.badgeId}-desktop" class="hidden absolute -top-2 -right-3 bg-red-500 text-white text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1 leading-none"></span>` : ''}
-      </a>`
-    ).join('');
+        ${badgeHtml}
+      </a>`;
+    }).join('');
 
-    const dropdownLinks = links.map(l => `
-      <a href="${l.href}" class="flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-lg transition-colors ${activePage === l.page ? 'text-green-600 bg-green-50' : 'text-gray-700 hover:bg-gray-50'}">
+    const dropdownLinks = links.map(l => {
+      const badgeHtml = l.badge
+        ? '<span id="' + l.badgeId + '-mobile" class="hidden absolute -top-1.5 -right-1.5 bg-red-500 text-white text-xs font-bold rounded-full min-w-[14px] h-[14px] flex items-center justify-center px-0.5 leading-none"></span>'
+        : '';
+      return `<a href="${l.href}" class="flex items-center gap-3 px-4 py-2.5 text-sm font-medium rounded-lg transition-colors ${activePage === l.page ? 'text-green-600 bg-green-50' : 'text-gray-700 hover:bg-gray-50'}">
         <span class="relative flex-shrink-0">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">${l.icon}</svg>
-          ${l.badge ? `<span id="${l.badgeId}-mobile" class="hidden absolute -top-1.5 -right-1.5 bg-red-500 text-white text-xs font-bold rounded-full min-w-[14px] h-[14px] flex items-center justify-center px-0.5 leading-none"></span>` : ''}
+          ${badgeHtml}
         </span>
         ${l.label}
-      </a>`
-    ).join('');
+      </a>`;
+    }).join('');
 
     const authButtons = isLoggedIn
       ? `<div class="flex items-center gap-2">
