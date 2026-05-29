@@ -270,6 +270,8 @@
           const stored = auth.getUser() || {};
           auth.saveSession(auth.getToken(), auth.getRole(), { ...stored, ...updated });
           renderAvatarCard(updated);
+          // Update nama di navbar tanpa reload
+          document.querySelectorAll('#navbar strong').forEach(el => el.textContent = updated.name || '');
           utils.showToast('Profil berhasil diperbarui!', 'success');
         } else {
           errMsg.textContent = res.message || 'Gagal menyimpan profil.';
