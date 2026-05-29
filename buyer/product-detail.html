@@ -327,6 +327,7 @@
         const res = await api.post('/cart', { product_id: productData.id, quantity: qty });
         if (res.success) {
           utils.showToast('Produk berhasil ditambahkan ke keranjang! 🛒', 'success');
+          utils.updateCartBadge();
         } else {
           utils.showToast(res.message || 'Gagal menambahkan ke keranjang', 'error');
         }
