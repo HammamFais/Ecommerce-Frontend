@@ -168,7 +168,8 @@ const utils = {
     const authButtons = isLoggedIn
       ? `<div class="flex items-center gap-2">
            ${role === 'buyer'
-             ? `<span class="text-sm text-gray-500 hidden sm:block">Halo, <strong class="text-gray-800">${user?.name || 'User'}</strong></span>`
+             ? `<span class="text-sm text-gray-500 hidden sm:block">Halo, <strong class="text-gray-800">${user?.name || 'User'}</strong></span>
+                <button onclick="auth.logout()" class="hidden sm:block text-sm font-medium text-red-500 hover:text-red-600 border border-red-200 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors">Keluar</button>`
              : `<span class="text-sm text-gray-500 hidden sm:block">Halo, <strong class="text-gray-800">${user?.name || 'User'}</strong></span>
                 <button onclick="auth.logout()" class="text-sm font-medium text-red-500 hover:text-red-600 border border-red-200 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors hidden sm:block">Keluar</button>`
            }
