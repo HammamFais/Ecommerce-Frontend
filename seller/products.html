@@ -367,7 +367,15 @@
         document.getElementById('save-text').textContent = 'Perbarui Produk';
         document.getElementById('edit-id').value = product.id;
         document.getElementById('field-name').value = product.name;
-        document.getElementById('field-category').value = product.category;
+        // Normalize category: API may return label string; map back to slug if needed
+        const catSlugMap = {
+          'makanan & minuman': 'makanan', 'kerajinan tangan': 'kerajinan',
+          'fashion & pakaian': 'fashion', 'elektronik': 'elektronik',
+          'pertanian & kebun': 'pertanian', 'lainnya': 'lainnya'
+        };
+        const catRaw = (product.category || '').toLowerCase();
+        const catValue = catSlugMap[catRaw] || catRaw;
+        document.getElementById('field-category').value = catValue;
         document.getElementById('field-price').value = product.price;
         document.getElementById('field-stock').value = product.stock;
         document.getElementById('field-description').value = product.description || '';
