@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profil Saya — PasarLokal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../assets/css/custom.css" />
+  <script>
+    tailwind.config = {
+      theme: { extend: { colors: {
+        primary: { DEFAULT: '#16a34a', dark: '#15803d', light: '#dcfce7' },
+        accent:  { DEFAULT: '#f97316', dark: '#ea580c' }
+      }}}
+    }
+  </script>
+</head>
+<body class="bg-gray-50 font-sans antialiased min-h-screen flex flex-col">
+
+  <div id="navbar"></div>
+
+  <div class="bg-white border-b border-gray-100">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <h1 class="text-2xl font-extrabold text-gray-900">Profil Saya</h1>
+      <p class="text-sm text-gray-500 mt-1">Kelola informasi akun dan data dirimu</p>
+    </div>
+  </div>
+
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 space-y-6">
+
+    <!-- Avatar card -->
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 flex items-center gap-5">
+      <div id="avatar-circle"
+        class="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-500 to-green-700 flex items-center justify-center flex-shrink-0">
+        <span id="avatar-initials" class="text-white font-bold text-xl">??</span>
+      </div>
+      <div class="flex-1 min-w-0">
+        <p id="avatar-name" class="font-bold text-gray-900 text-lg truncate">—</p>
+        <p id="avatar-email" class="text-sm text-gray-400 truncate">—</p>
+      </div>
+      <span id="avatar-badge"
+        class="flex-shrink-0 text-xs font-semibold px-3 py-1.5 rounded-full bg-green-100 text-green-700">
+        Penjual
+      </span>
+    </div>
+
+    <!-- Form -->
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+      <h2 class="font-bold text-gray-900 mb-5">Edit Informasi</h2>
+
+      <form id="profile-form" class="space-y-4" novalidate>
+
+        <!-- Nama -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">
+            Nama Lengkap <span class="text-red-500">*</span>
+          </label>
+          <input type="text" id="field-name" placeholder="Nama lengkap kamu"
+            class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-green-500 transition-colors" required />
+        </div>
+
+        <!-- Email (readonly) -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Email</label>
+          <input type="email" id="field-email" disabled
+            class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-100 text-gray-400 cursor-not-allowed" />
+        </div>
+
+        <!-- Telepon -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Nomor Telepon</label>
+          <input type="tel" id="field-phone" placeholder="08xxxxxxxxxx"
+            class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-green-500 transition-colors" />
+        </div>
+
+        <!-- Alamat -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Alamat Lengkap</label>
+          <textarea id="field-address" rows="3" placeholder="Jl. Contoh No. 1, RT/RW, Kelurahan, Kecamatan"
+            class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-green-500 transition-colors resize-none"></textarea>
+        </div>
+
+        <!-- Kota + Provinsi -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Kota</label>
+            <select id="field-city"
+              class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-green-500 transition-colors">
+              <option value="">Memuat kota...</option>
+            </select>
+            <input type="hidden" id="field-city-id" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Provinsi</label>
+            <input type="text" id="field-province" placeholder="Jawa Timur"
+              class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-green-500 transition-colors" />
+          </div>
+        </div>
+
+        <!-- Error -->
+        <div id="form-error" class="hidden flex items-start gap-2 bg-red-50 border border-red-100 text-red-600 rounded-xl px-4 py-3 text-sm">
+          <svg class="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span id="form-error-msg"></span>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-3 pt-2">
+          <button type="button" id="btn-reset"
+            class="flex-1 py-3 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+            Reset
+          </button>
+          <button type="submit" id="btn-save"
+            class="flex-1 py-3 bg-green-600 hover:bg-green-700 rounded-xl text-sm font-semibold text-white transition-colors flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed">
+            <span id="save-text">Simpan Perubahan</span>
+            <svg id="save-spinner" class="hidden w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+            </svg>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Logout -->
+    <div class="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="font-semibold text-gray-900 text-sm">Keluar dari Akun</p>
+          <p class="text-xs text-gray-400 mt-0.5">Kamu akan diarahkan ke halaman login</p>
+        </div>
+        <button onclick="auth.logout()"
+          class="flex items-center gap-2 px-4 py-2.5 border border-red-200 text-red-500 hover:bg-red-50 rounded-xl text-sm font-semibold transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+          </svg>
+          Keluar
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="footer"></div>
+
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script>
+    utils.injectNavbar('profile');
+    utils.injectFooter();
+    auth.requireAuth(['seller', 'admin']);
+
+    let originalData = {};
+
+    function getInitials(name) {
+      if (!name) return '??';
+      const parts = name.trim().split(/\s+/);
+      return (parts[0][0] + (parts[1] ? parts[1][0] : parts[0][1] || '')).toUpperCase();
+    }
+
+    function renderAvatarCard(user) {
+      document.getElementById('avatar-initials').textContent = getInitials(user.name);
+      document.getElementById('avatar-name').textContent = user.name || '—';
+      document.getElementById('avatar-email').textContent = user.email || '—';
+      document.getElementById('avatar-badge').textContent = 'Penjual';
+    }
+
+    function populateForm(user) {
+      document.getElementById('field-name').value     = user.name     || '';
+      document.getElementById('field-email').value    = user.email    || '';
+      document.getElementById('field-phone').value    = user.phone    || '';
+      document.getElementById('field-address').value  = user.address  || '';
+      document.getElementById('field-province').value = user.province || '';
+      const citySelect = document.getElementById('field-city');
+      const match = Array.from(citySelect.options).find(o => o.value === (user.city || ''));
+      if (match) {
+        citySelect.value = match.value;
+        document.getElementById('field-city-id').value  = match.dataset.cityId  || '';
+        document.getElementById('field-province').value = match.dataset.province || user.province || '';
+      }
+    }
+
+    async function loadCities() {
+      try {
+        const res = await fetch('https://ecommerce-backend-production-afa6.up.railway.app/api/shipping/cities');
+        const data = await res.json();
+        const select = document.getElementById('field-city');
+        select.innerHTML = '<option value="">Pilih kota</option>';
+        if (data.success && data.data) {
+          data.data.forEach(city => {
+            const opt = document.createElement('option');
+            opt.value = city.city_name;
+            opt.dataset.cityId  = city.city_id;
+            opt.dataset.province = city.province;
+            opt.textContent = `${city.city_name} — ${city.province}`;
+            select.appendChild(opt);
+          });
+        }
+      } catch (_) {
+        document.getElementById('field-city').innerHTML = '<option value="">Gagal load kota</option>';
+      }
+    }
+
+    document.getElementById('field-city').addEventListener('change', function () {
+      const selected = this.options[this.selectedIndex];
+      document.getElementById('field-city-id').value  = selected.dataset.cityId  || '';
+      document.getElementById('field-province').value = selected.dataset.province || '';
+    });
+
+    async function loadProfile() {
+      await loadCities();
+      try {
+        const res = await api.get('/auth/me');
+        const user = res.data || res.user || res;
+        originalData = { ...user };
+        renderAvatarCard(user);
+        populateForm(user);
+      } catch (_) {
+        const user = auth.getUser() || {};
+        originalData = { ...user };
+        renderAvatarCard(user);
+        populateForm(user);
+      }
+    }
+
+    document.getElementById('btn-reset').addEventListener('click', () => {
+      populateForm(originalData);
+      document.getElementById('form-error').classList.add('hidden');
+    });
+
+    document.getElementById('profile-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errEl  = document.getElementById('form-error');
+      const errMsg = document.getElementById('form-error-msg');
+      const spinner = document.getElementById('save-spinner');
+      const saveText = document.getElementById('save-text');
+      const saveBtn  = document.getElementById('btn-save');
+      errEl.classList.add('hidden');
+
+      const name = document.getElementById('field-name').value.trim();
+      if (!name) {
+        errMsg.textContent = 'Nama lengkap wajib diisi.';
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      const payload = {
+        name,
+        phone:    document.getElementById('field-phone').value.trim(),
+        address:  document.getElementById('field-address').value.trim(),
+        city:     document.getElementById('field-city').value,
+        city_id:  document.getElementById('field-city-id').value,
+        province: document.getElementById('field-province').value.trim(),
+      };
+
+      saveBtn.disabled = true;
+      saveText.textContent = 'Menyimpan...';
+      spinner.classList.remove('hidden');
+
+      try {
+        const res = await api.put('/auth/profile', payload);
+        if (res.success || res.data) {
+          const updated = res.data || { ...originalData, ...payload };
+          originalData = { ...updated };
+          const stored = auth.getUser() || {};
+          auth.saveSession(auth.getToken(), auth.getRole(), { ...stored, ...updated });
+          renderAvatarCard(updated);
+          utils.showToast('Profil berhasil diperbarui!', 'success');
+        } else {
+          errMsg.textContent = res.message || 'Gagal menyimpan profil.';
+          errEl.classList.remove('hidden');
+        }
+      } catch (_) {
+        errMsg.textContent = 'Terjadi kesalahan. Coba lagi.';
+        errEl.classList.remove('hidden');
+      } finally {
+        saveBtn.disabled = false;
+        saveText.textContent = 'Simpan Perubahan';
+        spinner.classList.add('hidden');
+      }
+    });
+
+    loadProfile();
+  </script>
+</body>
+</html>
