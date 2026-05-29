@@ -290,7 +290,7 @@
                     done ? 'bg-green-600 border-green-600 text-white' : 'bg-white border-gray-300 text-gray-300'
                   }">
                     ${done ? '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/></svg>'
-                           : `<span class="text-xs font-bold">${i+1}</span>`}
+                           : '<span class="text-xs font-bold">' + (i+1) + '</span>'}
                   </div>
                   <span class="text-xs ${done ? 'text-green-600 font-semibold' : 'text-gray-400'} text-center w-16 leading-tight">${labels[i]}</span>
                 </div>
