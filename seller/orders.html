@@ -517,16 +517,24 @@
 
         <!-- Items -->
         <div>
-          <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Produk Dipesan</p>
+          <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Produk Dipesan (${(order.items||[]).length} item)</p>
           <div class="space-y-2">
             ${(order.items || []).map(item => `
               <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
-                <span class="text-2xl flex-shrink-0">${DEMO_EMOJIS[item.product?.category]||'📦'}</span>
-                <div class="flex-1">
-                  <p class="text-sm font-semibold text-gray-900">${item.product?.name || '-'}</p>
-                  <p class="text-xs text-gray-400">x${item.quantity} × ${utils.formatRupiah(item.price)}</p>
+                <div class="w-14 h-14 rounded-xl overflow-hidden bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center flex-shrink-0 text-2xl">
+                  ${item.product?.image_url
+                    ? `<img src="${utils.getProductImageUrl(item.product.image_url)}" class="w-full h-full object-cover rounded-xl"
+                            onerror="this.style.display='none';this.nextElementSibling.style.display='flex'" />
+                       <span class="hidden">${DEMO_EMOJIS[item.product?.category]||'📦'}</span>`
+                    : DEMO_EMOJIS[item.product?.category]||'📦'
+                  }
                 </div>
-                <span class="text-sm font-bold text-gray-900">${utils.formatRupiah(item.price * item.quantity)}</span>
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm font-semibold text-gray-900 leading-snug">${item.product?.name || '-'}</p>
+                  <p class="text-xs text-gray-400 mt-0.5">${utils.formatRupiah(item.price)} / pcs</p>
+                  <p class="text-xs text-green-600 font-semibold mt-0.5">x${item.quantity}</p>
+                </div>
+                <span class="text-sm font-bold text-gray-900 flex-shrink-0">${utils.formatRupiah(item.price * item.quantity)}</span>
               </div>
             `).join('')}
           </div>
