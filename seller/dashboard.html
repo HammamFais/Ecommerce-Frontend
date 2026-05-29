@@ -283,18 +283,25 @@
         document.getElementById('stat-low-stock').textContent = d.low_stock_products?.length ?? 0;
 
         // Growth badges
-        if (d.sales_growth != null) {
-          const growthEl = document.getElementById('badge-sales-growth');
-          const isNeg = String(d.sales_growth).startsWith('-');
-          growthEl.textContent = d.sales_growth;
-          growthEl.className = `text-xs font-semibold px-2 py-1 rounded-full ${isNeg ? 'text-red-500 bg-red-50' : 'text-green-600 bg-green-50'}`;
+        function applyGrowthBadge(id, raw, positiveClass) {
+          const el = document.getElementById(id);
+          const num = parseFloat(raw);
+          let label, colorClass;
+          if (isNaN(num) || num === 0) {
+            label = '0%';
+            colorClass = 'text-gray-500 bg-gray-100';
+          } else if (num > 0) {
+            label = `+${num}%`;
+            colorClass = positiveClass;
+          } else {
+            label = `${num}%`;
+            colorClass = 'text-red-500 bg-red-50';
+          }
+          el.textContent = label;
+          el.className = `text-xs font-semibold px-2 py-1 rounded-full ${colorClass}`;
         }
-        if (d.orders_growth != null) {
-          const growthEl = document.getElementById('badge-orders-growth');
-          const isNeg = String(d.orders_growth).startsWith('-');
-          growthEl.textContent = d.orders_growth;
-          growthEl.className = `text-xs font-semibold px-2 py-1 rounded-full ${isNeg ? 'text-red-500 bg-red-50' : 'text-blue-600 bg-blue-50'}`;
-        }
+        if (d.sales_growth != null)  applyGrowthBadge('badge-sales-growth',  d.sales_growth,  'text-green-600 bg-green-50');
+        if (d.orders_growth != null) applyGrowthBadge('badge-orders-growth', d.orders_growth, 'text-blue-600 bg-blue-50');
 
         // Revenue chart — data real dari backend
         const { labels, values } = parseRevenueChart(d.revenue_chart);
