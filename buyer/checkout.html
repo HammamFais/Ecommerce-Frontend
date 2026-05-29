@@ -238,9 +238,9 @@
 
     // Fallback ongkir demo ketika RajaOngkir tidak bisa dihubungi
     const DEMO_ONGKIR = [
-      { service: 'REG', description: 'Reguler', cost: [{ value: 18000, etd: '2-3' }] },
-      { service: 'YES', description: 'Yakin Esok Sampai', cost: [{ value: 35000, etd: '1' }] },
-      { service: 'OKE', description: 'Ongkos Kirim Ekonomis', cost: [{ value: 14000, etd: '3-4' }] },
+      { service: 'REG', description: 'Reguler',              cost: 18000, etd: '2-3 day' },
+      { service: 'YES', description: 'Yakin Esok Sampai',    cost: 35000, etd: '1 day'   },
+      { service: 'OKE', description: 'Ongkos Kirim Ekonomis',cost: 14000, etd: '3-4 day' },
     ];
 
     let cartItems = [];
@@ -367,7 +367,7 @@
 
       try {
         const res = await api.get(`/shipping/cost?origin=${originId}&destination=${destId}&weight=${weight}&courier=${courier}`);
-        services = res.data?.[0]?.costs || res.data?.results?.[0]?.costs || [];
+        services = res.data || [];
         if (!services.length) throw new Error('no_services');
       } catch (_) {
         // RajaOngkir gagal / timeout — pakai fallback demo
@@ -393,17 +393,17 @@
         ${fallbackBadge}
         <p class="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">${courier.toUpperCase()} — Pilih Layanan</p>
         ${services.map(svc => {
-          const cost = svc.cost[0];
+          const cost = svc.cost;
           return `
             <label class="flex items-center gap-3 p-3.5 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-green-400 transition-colors">
-              <input type="radio" name="shipping-service" value="${cost.value}"
+              <input type="radio" name="shipping-service" value="${cost}"
                 data-service="${svc.service}" data-desc="${svc.description}"
                 class="text-green-600 focus:ring-green-500" />
               <div class="flex-1">
                 <p class="text-sm font-semibold text-gray-900">${courier.toUpperCase()} ${svc.service}</p>
-                <p class="text-xs text-gray-400">${svc.description} · Estimasi ${cost.etd} hari</p>
+                <p class="text-xs text-gray-400">${svc.description} · Estimasi ${svc.etd}</p>
               </div>
-              <span class="text-green-600 font-bold text-sm">${utils.formatRupiah(cost.value)}</span>
+              <span class="text-green-600 font-bold text-sm">${utils.formatRupiah(cost)}</span>
             </label>
           `;
         }).join('')}
