@@ -310,9 +310,9 @@ const utils = {
     if (!badgeDesktop && !badgeMobile) return;
 
     try {
-      const res = await api.get('/seller/orders?status=dibayar');
-      const items = res.data || res.orders || [];
-      const total = Array.isArray(items) ? items.length : 0;
+      const res = await api.get('/seller/orders');
+      const orders = res.data?.data || [];
+      const total = orders.filter(o => o.status === 'paid').length;
       const label = total >= 10 ? '9+' : String(total);
       [badgeDesktop, badgeMobile].forEach(b => {
         if (!b) return;
