@@ -94,10 +94,14 @@ const utils = {
   getCategoryLabel: (cat) => {
     const map = {
       makanan: 'Makanan & Minuman',
+      minuman: 'Minuman',
       kerajinan: 'Kerajinan Tangan',
       fashion: 'Fashion & Pakaian',
       elektronik: 'Elektronik',
       pertanian: 'Pertanian & Kebun',
+      aksesoris: 'Aksesoris',
+      kesehatan: 'Kesehatan',
+      furnitur: 'Furnitur',
       lainnya: 'Lainnya'
     };
     return map[cat] || cat;

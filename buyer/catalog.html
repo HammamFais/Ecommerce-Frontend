@@ -63,6 +63,10 @@
                 <span class="text-sm text-gray-700 group-hover:text-green-600 transition-colors">🍱 Makanan & Minuman</span>
               </label>
               <label class="flex items-center gap-2.5 cursor-pointer group">
+                <input type="radio" name="category" value="minuman" class="text-green-600 focus:ring-green-500" />
+                <span class="text-sm text-gray-700 group-hover:text-green-600 transition-colors">🥤 Minuman</span>
+              </label>
+              <label class="flex items-center gap-2.5 cursor-pointer group">
                 <input type="radio" name="category" value="kerajinan" class="text-green-600 focus:ring-green-500" />
                 <span class="text-sm text-gray-700 group-hover:text-green-600 transition-colors">👜 Kerajinan Tangan</span>
               </label>
@@ -77,6 +81,18 @@
               <label class="flex items-center gap-2.5 cursor-pointer group">
                 <input type="radio" name="category" value="pertanian" class="text-green-600 focus:ring-green-500" />
                 <span class="text-sm text-gray-700 group-hover:text-green-600 transition-colors">🌱 Pertanian & Kebun</span>
+              </label>
+              <label class="flex items-center gap-2.5 cursor-pointer group">
+                <input type="radio" name="category" value="aksesoris" class="text-green-600 focus:ring-green-500" />
+                <span class="text-sm text-gray-700 group-hover:text-green-600 transition-colors">💍 Aksesoris</span>
+              </label>
+              <label class="flex items-center gap-2.5 cursor-pointer group">
+                <input type="radio" name="category" value="kesehatan" class="text-green-600 focus:ring-green-500" />
+                <span class="text-sm text-gray-700 group-hover:text-green-600 transition-colors">🌿 Kesehatan</span>
+              </label>
+              <label class="flex items-center gap-2.5 cursor-pointer group">
+                <input type="radio" name="category" value="furnitur" class="text-green-600 focus:ring-green-500" />
+                <span class="text-sm text-gray-700 group-hover:text-green-600 transition-colors">🪑 Furnitur</span>
               </label>
               <label class="flex items-center gap-2.5 cursor-pointer group">
                 <input type="radio" name="category" value="lainnya" class="text-green-600 focus:ring-green-500" />
@@ -129,9 +145,14 @@
         <div class="flex gap-2 overflow-x-auto pb-2 mb-5 lg:hidden scrollbar-hide">
           <button data-cat="" class="cat-chip flex-shrink-0 bg-green-600 text-white text-xs font-semibold px-4 py-1.5 rounded-full transition-colors">Semua</button>
           <button data-cat="makanan" class="cat-chip flex-shrink-0 bg-white border border-gray-200 text-gray-600 text-xs font-semibold px-4 py-1.5 rounded-full transition-colors hover:border-green-400">🍱 Makanan</button>
+          <button data-cat="minuman" class="cat-chip flex-shrink-0 bg-white border border-gray-200 text-gray-600 text-xs font-semibold px-4 py-1.5 rounded-full transition-colors hover:border-green-400">🥤 Minuman</button>
           <button data-cat="kerajinan" class="cat-chip flex-shrink-0 bg-white border border-gray-200 text-gray-600 text-xs font-semibold px-4 py-1.5 rounded-full transition-colors hover:border-green-400">👜 Kerajinan</button>
           <button data-cat="fashion" class="cat-chip flex-shrink-0 bg-white border border-gray-200 text-gray-600 text-xs font-semibold px-4 py-1.5 rounded-full transition-colors hover:border-green-400">👗 Fashion</button>
+          <button data-cat="elektronik" class="cat-chip flex-shrink-0 bg-white border border-gray-200 text-gray-600 text-xs font-semibold px-4 py-1.5 rounded-full transition-colors hover:border-green-400">📱 Elektronik</button>
           <button data-cat="pertanian" class="cat-chip flex-shrink-0 bg-white border border-gray-200 text-gray-600 text-xs font-semibold px-4 py-1.5 rounded-full transition-colors hover:border-green-400">🌱 Pertanian</button>
+          <button data-cat="aksesoris" class="cat-chip flex-shrink-0 bg-white border border-gray-200 text-gray-600 text-xs font-semibold px-4 py-1.5 rounded-full transition-colors hover:border-green-400">💍 Aksesoris</button>
+          <button data-cat="kesehatan" class="cat-chip flex-shrink-0 bg-white border border-gray-200 text-gray-600 text-xs font-semibold px-4 py-1.5 rounded-full transition-colors hover:border-green-400">🌿 Kesehatan</button>
+          <button data-cat="furnitur" class="cat-chip flex-shrink-0 bg-white border border-gray-200 text-gray-600 text-xs font-semibold px-4 py-1.5 rounded-full transition-colors hover:border-green-400">🪑 Furnitur</button>
           <button data-cat="lainnya" class="cat-chip flex-shrink-0 bg-white border border-gray-200 text-gray-600 text-xs font-semibold px-4 py-1.5 rounded-full transition-colors hover:border-green-400">🎁 Lainnya</button>
         </div>
 

@@ -50,10 +50,14 @@
         class="px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:border-green-500 transition-colors">
         <option value="">Semua Kategori</option>
         <option value="makanan">🍱 Makanan & Minuman</option>
+        <option value="minuman">🥤 Minuman</option>
         <option value="kerajinan">👜 Kerajinan Tangan</option>
         <option value="fashion">👗 Fashion & Pakaian</option>
         <option value="elektronik">📱 Elektronik</option>
         <option value="pertanian">🌱 Pertanian & Kebun</option>
+        <option value="aksesoris">💍 Aksesoris</option>
+        <option value="kesehatan">🌿 Kesehatan</option>
+        <option value="furnitur">🪑 Furnitur</option>
         <option value="lainnya">🎁 Lainnya</option>
       </select>
       <select id="filter-stock"
@@ -138,10 +142,14 @@
               class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-green-500 transition-colors">
               <option value="">Pilih kategori</option>
               <option value="makanan">Makanan & Minuman</option>
+              <option value="minuman">Minuman</option>
               <option value="kerajinan">Kerajinan Tangan</option>
               <option value="fashion">Fashion & Pakaian</option>
               <option value="elektronik">Elektronik</option>
               <option value="pertanian">Pertanian & Kebun</option>
+              <option value="aksesoris">Aksesoris</option>
+              <option value="kesehatan">Kesehatan</option>
+              <option value="furnitur">Furnitur</option>
               <option value="lainnya">Lainnya</option>
             </select>
           </div>
@@ -367,15 +375,7 @@
         document.getElementById('save-text').textContent = 'Perbarui Produk';
         document.getElementById('edit-id').value = product.id;
         document.getElementById('field-name').value = product.name;
-        // Normalize category: API may return label string; map back to slug if needed
-        const catSlugMap = {
-          'makanan & minuman': 'makanan', 'kerajinan tangan': 'kerajinan',
-          'fashion & pakaian': 'fashion', 'elektronik': 'elektronik',
-          'pertanian & kebun': 'pertanian', 'lainnya': 'lainnya'
-        };
-        const catRaw = (product.category || '').toLowerCase();
-        const catValue = catSlugMap[catRaw] || catRaw;
-        document.getElementById('field-category').value = catValue;
+        document.getElementById('field-category').value = (product.category || '').toLowerCase();
         document.getElementById('field-price').value = product.price;
         document.getElementById('field-stock').value = product.stock;
         document.getElementById('field-description').value = product.description || '';
