@@ -170,7 +170,6 @@ const utils = {
              ? `<a href="/buyer/profile.html" class="text-sm text-gray-500 hidden sm:block hover:text-green-600 transition-colors">Halo, <strong class="text-gray-800">${user?.name || 'User'}</strong></a>`
              : `<span class="text-sm text-gray-500 hidden sm:block">Halo, <strong class="text-gray-800">${user?.name || 'User'}</strong></span>`
            }
-           <button onclick="auth.logout()" class="hidden md:block bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm font-medium px-4 py-2 rounded-lg transition-colors">Keluar</button>
            <div class="relative md:hidden">
              <button id="hamburger-btn" class="p-2 rounded-lg hover:bg-gray-100 transition-colors" aria-label="Menu" aria-expanded="false">
                <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
