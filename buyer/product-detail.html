@@ -346,9 +346,16 @@
 
       const qty = parseInt(qtyInput.value) || 1;
       try {
-        await api.post('/cart', { product_id: productData.id, quantity: qty });
-      } catch (_) {}
-      window.location.href = 'cart.html';
+        const res = await api.post('/cart', { product_id: productData.id, quantity: qty });
+        const cartItemId = res.data?.id || res.cart_item?.id || res.id;
+        if (cartItemId) {
+          window.location.href = `/buyer/checkout.html?items=${cartItemId}`;
+        } else {
+          window.location.href = '/buyer/checkout.html';
+        }
+      } catch (_) {
+        utils.showToast('Gagal menambahkan ke keranjang', 'error');
+      }
     });
 
     loadProduct();
