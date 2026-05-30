@@ -388,8 +388,8 @@
 
         if (typeof snap !== 'undefined') {
           snap.pay(snapToken, {
-            onSuccess: () => { utils.showToast('Pembayaran berhasil!', 'success'); loadOrders(); },
-            onPending: () => { utils.showToast('Menunggu konfirmasi pembayaran...', 'info'); loadOrders(); },
+            onSuccess: () => { utils.showToast('Pembayaran berhasil!', 'success'); if (typeof utils.updateBuyerOrderBadge === 'function') utils.updateBuyerOrderBadge(); loadOrders(); },
+            onPending: () => { utils.showToast('Menunggu konfirmasi pembayaran...', 'info'); if (typeof utils.updateBuyerOrderBadge === 'function') utils.updateBuyerOrderBadge(); loadOrders(); },
             onError: () => utils.showToast('Pembayaran gagal. Coba lagi.', 'error'),
             onClose: () => utils.showToast('Pembayaran dibatalkan', 'warning'),
           });
@@ -432,6 +432,7 @@
         const res = await api.put(`/orders/${orderId}/cancel`, {});
         if (res.success || res.data) {
           utils.showToast('Pesanan berhasil dibatalkan', 'success');
+          if (typeof utils.updateBuyerOrderBadge === 'function') utils.updateBuyerOrderBadge();
           loadOrders();
         } else {
           throw new Error(res.message || 'Gagal membatalkan pesanan');
