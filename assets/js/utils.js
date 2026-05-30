@@ -139,7 +139,7 @@ const utils = {
     const buyerLinks = [
       { href: '/buyer/catalog.html', page: 'catalog', label: 'Katalog',      icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/>' },
       { href: '/buyer/cart.html',    page: 'cart',    label: 'Keranjang',    icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>', badge: true, badgeId: 'cart-badge' },
-      { href: '/buyer/orders.html',  page: 'orders',  label: 'Pesanan Saya', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>' },
+      { href: '/buyer/orders.html',  page: 'orders',  label: 'Pesanan Saya', icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>', badge: true, badgeId: 'buyer-order-badge' },
       { href: '/buyer/profile.html', page: 'profile', label: 'Profil Saya',  icon: '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>' },
     ];
     const guestLinks = [
@@ -282,6 +282,7 @@ const utils = {
 
     if (auth.isLoggedIn() && auth.getRole() === 'buyer') {
       utils.updateCartBadge();
+      utils.updateBuyerOrderBadge();
     }
     if (auth.isLoggedIn() && auth.getRole() === 'seller') {
       utils.updateSellerOrderBadge();
@@ -297,6 +298,28 @@ const utils = {
       const res = await api.get('/cart');
       const items = res.data || res.cart || [];
       const total = items.reduce((sum, item) => sum + (item.quantity || 1), 0);
+      const label = total >= 10 ? '9+' : String(total);
+      [badgeDesktop, badgeMobile].forEach(b => {
+        if (!b) return;
+        if (total > 0) {
+          b.textContent = label;
+          b.classList.remove('hidden');
+        } else {
+          b.classList.add('hidden');
+        }
+      });
+    } catch (_) {}
+  },
+
+  updateBuyerOrderBadge: async () => {
+    const badgeDesktop = document.getElementById('buyer-order-badge-desktop');
+    const badgeMobile  = document.getElementById('buyer-order-badge-mobile');
+    if (!badgeDesktop && !badgeMobile) return;
+
+    try {
+      const res = await api.get('/orders');
+      const orders = res.data?.data || [];
+      const total = orders.filter(o => o.status === 'pending').length;
       const label = total >= 10 ? '9+' : String(total);
       [badgeDesktop, badgeMobile].forEach(b => {
         if (!b) return;
