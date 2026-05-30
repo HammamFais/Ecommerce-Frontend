@@ -56,42 +56,51 @@
 
         <!-- Shipping address -->
         <div class="bg-white rounded-2xl border border-gray-100 p-6">
-          <div class="flex items-center gap-3 mb-5">
-            <div class="w-9 h-9 bg-green-100 rounded-xl flex items-center justify-center">
-              <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
+          <div class="flex items-center justify-between gap-3 mb-5">
+            <div class="flex items-center gap-3">
+              <div class="w-9 h-9 bg-green-100 rounded-xl flex items-center justify-center">
+                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+              <h2 class="font-bold text-gray-900">Alamat Pengiriman</h2>
             </div>
-            <h2 class="font-bold text-gray-900">Alamat Pengiriman</h2>
+            <button id="btn-edit-address" class="text-sm text-blue-600 hover:text-blue-700 font-medium">✏️ Ubah Alamat</button>
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div class="sm:col-span-2">
               <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Nama Penerima</label>
-              <input type="text" id="recipient-name" placeholder="Nama lengkap penerima"
-                class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-green-500 transition-colors" />
+              <input type="text" id="recipient-name" placeholder="Nama lengkap penerima" readonly
+                class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 cursor-not-allowed transition-colors" />
             </div>
             <div class="sm:col-span-2">
               <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">No. Telepon</label>
-              <input type="tel" id="phone" placeholder="08xxxxxxxxxx"
-                class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-green-500 transition-colors" />
+              <input type="tel" id="phone" placeholder="08xxxxxxxxxx" readonly
+                oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+                class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 cursor-not-allowed transition-colors" />
             </div>
             <div class="sm:col-span-2">
               <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Alamat Lengkap</label>
-              <textarea id="address" rows="3" placeholder="Jl. contoh No. 1, RT/RW, Kelurahan, Kecamatan"
-                class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-green-500 transition-colors resize-none"></textarea>
+              <textarea id="address" rows="3" placeholder="Jl. contoh No. 1, RT/RW, Kelurahan, Kecamatan" readonly
+                class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 cursor-not-allowed transition-colors resize-none"></textarea>
             </div>
             <div>
               <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Kota</label>
-              <input type="text" id="city" placeholder="Nama kota"
-                class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-green-500 transition-colors" />
+              <input type="text" id="city" placeholder="Nama kota" readonly
+                class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 cursor-not-allowed transition-colors" />
+              <input type="hidden" id="city-id" />
+              <!-- Dropdown kota (muncul saat edit mode) -->
+              <select id="city-select" class="hidden w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-white focus:border-green-500 transition-colors">
+                <option value="">Memuat kota...</option>
+              </select>
             </div>
             <div>
               <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Kode Pos</label>
-              <input type="text" id="postal-code" placeholder="Kode pos"
-                class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-green-500 transition-colors" />
+              <input type="text" id="postal-code" placeholder="Kode pos" readonly
+                class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 cursor-not-allowed transition-colors" />
             </div>
           </div>
         </div>
@@ -247,6 +256,19 @@
     let selectedShipping = null;
     let productSubtotal = 0;
 
+    const POSTAL_CODES = {
+      '17':'23911','20':'23711','22':'24351','39':'40111','40':'40551','42':'69101',
+      '52':'29111','55':'65311','57':'17111','80':'80111','82':'16411','99':'61101',
+      '114':'90111','115':'63111','116':'56111','119':'65111','151':'11220','152':'10110',
+      '153':'12110','154':'13110','155':'14110','158':'68111','161':'61411','171':'65111',
+      '174':'95111','177':'83111','182':'20111','191':'61311','197':'64411','199':'63211',
+      '203':'63511','207':'25111','209':'69301','211':'67101','214':'28111','218':'63411',
+      '220':'78111','227':'67201','244':'75111','262':'69201','264':'50111','265':'61201',
+      '271':'68301','278':'57111','288':'69401','294':'60111','296':'15111','297':'15111',
+      '301':'46101','308':'66311','309':'62301','310':'66211','376':'55111','399':'57111',
+      '444':'60111','455':'15111','501':'55111',
+    };
+
     // Pre-fill data buyer dari localStorage (data login)
     const user = auth.getUser();
     if (user) {
@@ -254,6 +276,8 @@
       document.getElementById('phone').value = user.phone || '';
       document.getElementById('address').value = user.address || '';
       document.getElementById('city').value = user.city || '';
+      document.getElementById('city-id').value = user.city_id || '';
+      document.getElementById('postal-code').value = user.postal_code || POSTAL_CODES[user.city_id] || '';
 
       // Set kota tujuan dari city_id buyer
       if (user.city_id) {
@@ -261,6 +285,99 @@
         document.getElementById('dest-city-display').value = user.city || ('ID: ' + user.city_id);
       }
     }
+
+    // ── Edit address toggle ────────────────────────────
+    let addressOriginal = {};
+    let citiesLoaded = false;
+
+    async function loadCityOptions() {
+      if (citiesLoaded) return;
+      try {
+        const res = await fetch('https://ecommerce-backend-production-afa6.up.railway.app/api/shipping/cities');
+        const data = await res.json();
+        const select = document.getElementById('city-select');
+        select.innerHTML = '<option value="">Pilih kota</option>';
+        if (data.success && data.data) {
+          data.data.forEach(c => {
+            const opt = document.createElement('option');
+            opt.value = c.city_name;
+            opt.dataset.cityId = c.city_id;
+            opt.dataset.province = c.province;
+            opt.textContent = c.city_name;
+            select.appendChild(opt);
+          });
+        }
+        // Set nilai awal dropdown sesuai kota saat ini
+        select.value = document.getElementById('city').value;
+        citiesLoaded = true;
+      } catch (_) {}
+    }
+
+    document.getElementById('city-select').addEventListener('change', function () {
+      const selected = this.options[this.selectedIndex];
+      const cityId = selected.dataset.cityId || '';
+      document.getElementById('city-id').value    = cityId;
+      document.getElementById('postal-code').value = POSTAL_CODES[cityId] || '';
+      // Update dest city id untuk hitung ongkir
+      document.getElementById('dest-city-id').value      = cityId;
+      document.getElementById('dest-city-display').value = selected.value || '';
+    });
+
+    const editBtn = document.getElementById('btn-edit-address');
+    let editMode = false;
+
+    function setAddressReadonly(readonly) {
+      const phoneEl   = document.getElementById('phone');
+      const addressEl = document.getElementById('address');
+      const cityEl    = document.getElementById('city');
+      const citySelect = document.getElementById('city-select');
+      const roClass   = 'bg-gray-50 cursor-not-allowed';
+      const rwClass   = 'bg-white focus:border-green-500';
+
+      [phoneEl, addressEl].forEach(el => {
+        el.readOnly = readonly;
+        el.className = el.className.replace(readonly ? rwClass : roClass, readonly ? roClass : rwClass);
+      });
+      if (readonly) {
+        cityEl.classList.remove('hidden');
+        citySelect.classList.add('hidden');
+      } else {
+        cityEl.classList.add('hidden');
+        citySelect.classList.remove('hidden');
+        citySelect.value = cityEl.value;
+      }
+    }
+
+    editBtn.addEventListener('click', async () => {
+      if (!editMode) {
+        // Simpan nilai asal untuk cancel
+        addressOriginal = {
+          phone:   document.getElementById('phone').value,
+          address: document.getElementById('address').value,
+          city:    document.getElementById('city').value,
+          cityId:  document.getElementById('city-id').value,
+          postal:  document.getElementById('postal-code').value,
+          destId:  document.getElementById('dest-city-id').value,
+          destDisplay: document.getElementById('dest-city-display').value,
+        };
+        await loadCityOptions();
+        setAddressReadonly(false);
+        editBtn.textContent = '✕ Batal';
+        editMode = true;
+      } else {
+        // Restore nilai asal
+        document.getElementById('phone').value              = addressOriginal.phone;
+        document.getElementById('address').value            = addressOriginal.address;
+        document.getElementById('city').value               = addressOriginal.city;
+        document.getElementById('city-id').value            = addressOriginal.cityId;
+        document.getElementById('postal-code').value        = addressOriginal.postal;
+        document.getElementById('dest-city-id').value       = addressOriginal.destId;
+        document.getElementById('dest-city-display').value  = addressOriginal.destDisplay;
+        setAddressReadonly(true);
+        editBtn.textContent = '✏️ Ubah Alamat';
+        editMode = false;
+      }
+    });
 
     async function loadCheckoutItems() {
       const itemIds = (utils.getQueryParam('items') || '').split(',').map(Number).filter(Boolean);
