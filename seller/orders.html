@@ -37,6 +37,9 @@
         <div class="flex items-center gap-1.5 bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-semibold px-3 py-1.5 rounded-full">
           <span id="count-shipped">0</span> Dikirim
         </div>
+        <div class="flex items-center gap-1.5 bg-red-50 border border-red-200 text-red-700 text-xs font-semibold px-3 py-1.5 rounded-full">
+          <span id="count-cancelled">0</span> Dibatalkan
+        </div>
       </div>
     </div>
   </div>
@@ -225,7 +228,8 @@
     function updateCountChips() {
       document.getElementById('count-pending').textContent  = allOrders.filter(o => o.status==='pending').length;
       document.getElementById('count-paid').textContent     = allOrders.filter(o => o.status==='paid').length;
-      document.getElementById('count-shipped').textContent  = allOrders.filter(o => o.status==='shipped').length;
+      document.getElementById('count-shipped').textContent    = allOrders.filter(o => o.status==='shipped').length;
+      document.getElementById('count-cancelled').textContent  = allOrders.filter(o => o.status==='cancelled').length;
     }
 
     function renderOrders() {
