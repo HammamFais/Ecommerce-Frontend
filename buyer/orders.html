@@ -108,55 +108,6 @@
 
     const DEMO_EMOJIS = { makanan:'🍱', kerajinan:'👜', fashion:'👗', elektronik:'📱', pertanian:'🌿', lainnya:'🎁' };
 
-    const DEMO_ORDERS = [
-      {
-        id: 'ORD-001',
-        status: 'shipped',
-        created_at: '2024-11-10T10:30:00Z',
-        total_price: 210000,
-        shipping_cost: 15000,
-        shipping_address: 'Jl. Raya No. 10, Surabaya',
-        shipping_city: 'Surabaya',
-        courier: 'jne-REG',
-        seller: { name: 'Dapur Bu Sari' },
-        items: [
-          { quantity:2, price:45000, product:{ name:'Kue Nastar Spesial', category:'makanan', image_url:null } },
-          { quantity:1, price:120000, product:{ name:'Tas Anyaman Bambu', category:'kerajinan', image_url:null } },
-        ],
-        payment: { status:'success', payment_method:'bank_transfer' }
-      },
-      {
-        id: 'ORD-002',
-        status: 'pending',
-        created_at: '2024-11-12T14:00:00Z',
-        total_price: 110000,
-        shipping_cost: 10000,
-        shipping_address: 'Jl. Merdeka No. 5, Malang',
-        shipping_city: 'Malang',
-        courier: 'jnt-REG',
-        seller: { name: 'Kebun Sehat' },
-        items: [
-          { quantity:3, price:35000, product:{ name:'Teh Herbal Organik', category:'pertanian', image_url:null } },
-        ],
-        payment: { status:'pending', payment_method:null }
-      },
-      {
-        id: 'ORD-003',
-        status: 'done',
-        created_at: '2024-10-28T09:15:00Z',
-        total_price: 300000,
-        shipping_cost: 15000,
-        shipping_address: 'Jl. Diponegoro No. 2, Jakarta',
-        shipping_city: 'Jakarta',
-        courier: 'jne-YES',
-        seller: { name: 'Batik Putri' },
-        items: [
-          { quantity:1, price:285000, product:{ name:'Batik Tulis Solo', category:'fashion', image_url:null } },
-        ],
-        payment: { status:'success', payment_method:'gopay' }
-      },
-    ];
-
     let allOrders = [];
     let activeStatus = '';
 
@@ -164,10 +115,24 @@
       try {
         const res = await api.get('/orders');
         allOrders = res.data?.data || res.data || [];
+        renderOrders();
       } catch (_) {
-        allOrders = DEMO_ORDERS;
+        document.getElementById('orders-loading').classList.add('hidden');
+        document.getElementById('orders-list').classList.add('hidden');
+        const emptyEl = document.getElementById('orders-empty');
+        emptyEl.classList.remove('hidden');
+        emptyEl.innerHTML = `
+          <svg class="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <p class="text-base font-medium text-gray-500">Gagal memuat pesanan.</p>
+          <p class="text-sm text-gray-400">Coba refresh halaman.</p>
+          <button onclick="location.reload()"
+            class="mt-2 px-5 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-semibold rounded-xl transition-colors">
+            Refresh
+          </button>
+        `;
       }
-      renderOrders();
     }
 
     function renderOrders() {
