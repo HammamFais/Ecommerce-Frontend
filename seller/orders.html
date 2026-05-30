@@ -32,9 +32,11 @@
           <span id="count-pending">0</span> Baru
         </div>
         <div class="flex items-center gap-1.5 bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold px-3 py-1.5 rounded-full">
+          <span id="dot-paid" class="hidden w-1.5 h-1.5 bg-blue-500 rounded-full pulse-dot"></span>
           <span id="count-paid">0</span> Dibayar
         </div>
         <div class="flex items-center gap-1.5 bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-semibold px-3 py-1.5 rounded-full">
+          <span id="dot-shipped" class="hidden w-1.5 h-1.5 bg-indigo-500 rounded-full pulse-dot"></span>
           <span id="count-shipped">0</span> Dikirim
         </div>
         <div class="flex items-center gap-1.5 bg-red-50 border border-red-200 text-red-700 text-xs font-semibold px-3 py-1.5 rounded-full">
@@ -226,10 +228,14 @@
     }
 
     function updateCountChips() {
-      document.getElementById('count-pending').textContent  = allOrders.filter(o => o.status==='pending').length;
-      document.getElementById('count-paid').textContent     = allOrders.filter(o => o.status==='paid').length;
-      document.getElementById('count-shipped').textContent    = allOrders.filter(o => o.status==='shipped').length;
-      document.getElementById('count-cancelled').textContent  = allOrders.filter(o => o.status==='cancelled').length;
+      document.getElementById('count-pending').textContent   = allOrders.filter(o => o.status==='pending').length;
+      const paidCount    = allOrders.filter(o => o.status==='paid').length;
+      const shippedCount = allOrders.filter(o => o.status==='shipped').length;
+      document.getElementById('count-paid').textContent      = paidCount;
+      document.getElementById('count-shipped').textContent   = shippedCount;
+      document.getElementById('count-cancelled').textContent = allOrders.filter(o => o.status==='cancelled').length;
+      document.getElementById('dot-paid').classList.toggle('hidden', paidCount === 0);
+      document.getElementById('dot-shipped').classList.toggle('hidden', shippedCount === 0);
     }
 
     function renderOrders() {
