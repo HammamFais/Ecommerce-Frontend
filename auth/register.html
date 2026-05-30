@@ -314,15 +314,15 @@
 
           <!-- Kode Pos -->
           <div>
-            <label for="reg-postal-code" class="block text-sm font-semibold text-gray-700 mb-1.5">Kode Pos <span class="text-red-500">*</span></label>
+            <label for="reg-postal-code" class="block text-sm font-semibold text-gray-700 mb-1.5">Kode Pos</label>
             <input
               type="text"
               id="reg-postal-code"
               name="postal_code"
-              placeholder="Contoh: 60111"
+              placeholder="Otomatis dari kota"
               maxlength="10"
-              class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 bg-gray-50 focus:bg-white focus:border-green-500 transition-colors"
-              required
+              readonly
+              class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 bg-gray-100 text-gray-500 cursor-not-allowed transition-colors"
             />
           </div>
 
@@ -423,10 +423,25 @@
       }
     })();
 
+    const POSTAL_CODES = {
+      '17':'23911','20':'23711','22':'24351','39':'40111','40':'40551','42':'69101',
+      '52':'29111','55':'65311','57':'17111','80':'80111','82':'16411','99':'61101',
+      '114':'90111','115':'63111','116':'56111','119':'65111','151':'11220','152':'10110',
+      '153':'12110','154':'13110','155':'14110','158':'68111','161':'61411','171':'65111',
+      '174':'95111','177':'83111','182':'20111','191':'61311','197':'64411','199':'63211',
+      '203':'63511','207':'25111','209':'69301','211':'67101','214':'28111','218':'63411',
+      '220':'78111','227':'67201','244':'75111','262':'69201','264':'50111','265':'61201',
+      '271':'68301','278':'57111','288':'69401','294':'60111','296':'15111','297':'15111',
+      '301':'46101','308':'66311','309':'62301','310':'66211','376':'55111','399':'57111',
+      '444':'60111','455':'15111','501':'55111',
+    };
+
     document.getElementById('city').addEventListener('change', function () {
       const selected = this.options[this.selectedIndex];
-      document.getElementById('city-id').value    = selected.dataset.cityId   || '';
-      document.getElementById('province').value   = selected.dataset.province || '';
+      const cityId = selected.dataset.cityId || '';
+      document.getElementById('city-id').value        = cityId;
+      document.getElementById('province').value        = selected.dataset.province || '';
+      document.getElementById('reg-postal-code').value = POSTAL_CODES[cityId] || '';
     });
 
     const form        = document.getElementById('register-form');
@@ -596,7 +611,6 @@
       if (!document.getElementById('phone').value.trim()) return showError('Nomor telepon wajib diisi.');
       if (!document.getElementById('address').value.trim()) return showError('Alamat lengkap wajib diisi.');
       if (!document.getElementById('city').value) return showError('Kota wajib dipilih.');
-      if (!document.getElementById('reg-postal-code').value.trim()) return showError('Kode pos wajib diisi.');
       if (!role) return showError('Pilih jenis akun terlebih dahulu.');
       if (!terms) return showError('Kamu harus menyetujui syarat & ketentuan.');
 
