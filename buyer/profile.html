@@ -97,6 +97,13 @@
           </div>
         </div>
 
+        <!-- Kode Pos -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Kode Pos</label>
+          <input type="text" id="field-postal-code" placeholder="Contoh: 60111" maxlength="10"
+            class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-green-500 transition-colors" />
+        </div>
+
         <!-- Error -->
         <div id="form-error" class="hidden flex items-start gap-2 bg-red-50 border border-red-100 text-red-600 rounded-xl px-4 py-3 text-sm">
           <svg class="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -173,7 +180,8 @@
       document.getElementById('field-email').value    = user.email    || '';
       document.getElementById('field-phone').value    = user.phone    || '';
       document.getElementById('field-address').value  = user.address  || '';
-      document.getElementById('field-province').value = user.province || '';
+      document.getElementById('field-province').value    = user.province    || '';
+      document.getElementById('field-postal-code').value = user.postal_code || '';
       // city select: set after cities are loaded (handled in loadCities + loadProfile)
       const citySelect = document.getElementById('field-city');
       const match = Array.from(citySelect.options).find(o => o.value === (user.city || ''));
@@ -196,7 +204,7 @@
             opt.value = city.city_name;
             opt.dataset.cityId  = city.city_id;
             opt.dataset.province = city.province;
-            opt.textContent = `${city.city_name} — ${city.province}`;
+            opt.textContent = city.city_name;
             select.appendChild(opt);
           });
         }
@@ -254,7 +262,8 @@
         address:  document.getElementById('field-address').value.trim(),
         city:     document.getElementById('field-city').value,
         city_id:  document.getElementById('field-city-id').value,
-        province: document.getElementById('field-province').value.trim(),
+        province:    document.getElementById('field-province').value.trim(),
+        postal_code: document.getElementById('field-postal-code').value.trim(),
       };
 
       saveBtn.disabled = true;

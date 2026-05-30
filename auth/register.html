@@ -253,7 +253,7 @@
           <!-- Optional fields divider -->
           <div class="flex items-center gap-3">
             <div class="flex-1 h-px bg-gray-100"></div>
-            <span class="text-xs text-gray-400 font-medium">Informasi Tambahan (opsional)</span>
+            <span class="text-xs text-gray-400 font-medium">Informasi Tambahan</span>
             <div class="flex-1 h-px bg-gray-100"></div>
           </div>
 
@@ -310,6 +310,20 @@
                 class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 bg-gray-100 text-gray-500 cursor-not-allowed transition-colors"
               />
             </div>
+          </div>
+
+          <!-- Kode Pos -->
+          <div>
+            <label for="reg-postal-code" class="block text-sm font-semibold text-gray-700 mb-1.5">Kode Pos <span class="text-red-500">*</span></label>
+            <input
+              type="text"
+              id="reg-postal-code"
+              name="postal_code"
+              placeholder="Contoh: 60111"
+              maxlength="10"
+              class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 bg-gray-50 focus:bg-white focus:border-green-500 transition-colors"
+              required
+            />
           </div>
 
           <!-- Role selector -->
@@ -400,7 +414,7 @@
             opt.value = city.city_name;
             opt.dataset.cityId   = city.city_id;
             opt.dataset.province = city.province;
-            opt.textContent = `${city.city_name} — ${city.province}`;
+            opt.textContent = city.city_name;
             select.appendChild(opt);
           });
         }
@@ -579,6 +593,10 @@
       if (!password) return showError('Password tidak boleh kosong.');
       if (password.length < 8) return showError('Password minimal 8 karakter.');
       if (password !== confirm) return showError('Konfirmasi password tidak cocok.');
+      if (!document.getElementById('phone').value.trim()) return showError('Nomor telepon wajib diisi.');
+      if (!document.getElementById('address').value.trim()) return showError('Alamat lengkap wajib diisi.');
+      if (!document.getElementById('city').value) return showError('Kota wajib dipilih.');
+      if (!document.getElementById('reg-postal-code').value.trim()) return showError('Kode pos wajib diisi.');
       if (!role) return showError('Pilih jenis akun terlebih dahulu.');
       if (!terms) return showError('Kamu harus menyetujui syarat & ketentuan.');
 
@@ -587,9 +605,10 @@
         const extras = {
           phone:    document.getElementById('phone').value.trim()    || undefined,
           address:  document.getElementById('address').value.trim()  || undefined,
-          city:     document.getElementById('city').value            || undefined,
-          city_id:  document.getElementById('city-id').value         || undefined,
-          province: document.getElementById('province').value.trim() || undefined,
+          city:        document.getElementById('city').value                    || undefined,
+          city_id:     document.getElementById('city-id').value                 || undefined,
+          province:    document.getElementById('province').value.trim()         || undefined,
+          postal_code: document.getElementById('reg-postal-code').value.trim()  || undefined,
         };
         Object.keys(extras).forEach(k => extras[k] === undefined && delete extras[k]);
         const res = await auth.register(name, email, password, role, extras);
