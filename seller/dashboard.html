@@ -334,10 +334,10 @@
         // Donut chart — mapping key backend → key frontend
         const statusDist = {
           pending:   d.order_status_counts?.pending    || 0,
-          paid:      d.order_status_counts?.dibayar    || 0,
-          shipped:   d.order_status_counts?.dikirim    || 0,
-          done:      d.order_status_counts?.selesai    || 0,
-          cancelled: d.order_status_counts?.dibatalkan || 0,
+          paid:      d.order_status_counts?.paid       || d.order_status_counts?.dibayar    || 0,
+          shipped:   d.order_status_counts?.shipped    || d.order_status_counts?.dikirim    || 0,
+          done:      d.order_status_counts?.done       || d.order_status_counts?.selesai    || 0,
+          cancelled: d.order_status_counts?.cancelled  || d.order_status_counts?.dibatalkan || 0,
         };
         renderDonutChart(statusDist);
 
