@@ -12,10 +12,14 @@ const getMultipartHeaders = () => ({
 const handleResponse = async (response) => {
   const data = await response.json();
   if (response.status === 401) {
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
-    localStorage.removeItem('user');
-    window.location.href = '/auth/login.html';
+    if (typeof auth !== 'undefined' && typeof auth.logout === 'function') {
+      auth.logout();
+    } else {
+      localStorage.removeItem('token');
+      localStorage.removeItem('role');
+      localStorage.removeItem('user');
+      window.location.href = '/auth/login.html';
+    }
     return;
   }
   return data;
