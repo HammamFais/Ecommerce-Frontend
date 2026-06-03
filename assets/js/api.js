@@ -1,4 +1,4 @@
-const BASE_URL = 'https://ecommerce-backend-production-afa6.up.railway.app/api';
+const BASE_URL = 'https://ecommerce-backend-production-12cc.up.railway.app/api';
 
 const getHeaders = () => ({
   'Content-Type': 'application/json',
