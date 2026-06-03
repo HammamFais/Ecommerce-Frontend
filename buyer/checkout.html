@@ -293,7 +293,7 @@
     async function loadCityOptions() {
       if (citiesLoaded) return;
       try {
-        const res = await fetch('https://ecommerce-backend-production-12cc.up.railway.app/api/shipping/cities');
+        const res = await fetch(`${API_BASE_URL}/shipping/cities`);
         const data = await res.json();
         const select = document.getElementById('city-select');
         select.innerHTML = '<option value="">Pilih kota</option>';
