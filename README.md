@@ -18,9 +18,6 @@ Deskripsi singkat proyek frontend PasarLokal untuk tugas Mata Kuliah Aplikasi Be
 - **`seller/`**: halaman seller (dashboard, products, orders, profile)
 - **`assets/js`**: `api.js`, `auth.js`, `utils.js` (fungsi fetch, auth, helper)
 
-**Catatan penting:**
-- Jangan commit file sementara seperti `_tmp_*.js` — sudah ditambahkan ke `.gitignore`.
-
 **Data Kelompok**
 - **Kelompok 2 — Teknologi Aplikasi Web E-Commerce**
 
