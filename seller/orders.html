@@ -592,6 +592,11 @@
     document.getElementById('detail-close').addEventListener('click', () => document.getElementById('modal-detail').classList.add('hidden'));
     document.getElementById('detail-backdrop').addEventListener('click', () => document.getElementById('modal-detail').classList.add('hidden'));
 
+    document.getElementById('search-order').addEventListener('input', (e) => {
+      searchQuery = e.target.value.toLowerCase().trim();
+      renderOrders();
+    });
+
     loadOrders();
   </script>
 </body>
