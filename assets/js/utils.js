@@ -110,7 +110,7 @@ const utils = {
   getProductImageUrl: (url) => {
     if (!url) return 'https://placehold.co/400x300/e8f5e9/2e7d32?text=PasarLokal';
     if (url.startsWith('http')) return url;
-    const storageBaseUrl = window.API_STORAGE_BASE_URL || 'https://ecommerce-backend-production-12cc.up.railway.app/storage';
+    const storageBaseUrl = window.API_STORAGE_BASE_URL || 'https://pasarlokal-api.vercel.app/storage';
     return `${storageBaseUrl}/${url}`;
   },
 

@@ -1,4 +1,4 @@
-const BACKEND_ORIGIN = 'https://ecommerce-backend-production-12cc.up.railway.app';
+const BACKEND_ORIGIN = 'https://pasarlokal-api.vercel.app';
 const BASE_URL = `${BACKEND_ORIGIN}/api`;
 
 window.API_BASE_URL = BASE_URL;
