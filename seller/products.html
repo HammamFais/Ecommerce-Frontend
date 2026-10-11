@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kelola Produk — PasarLokal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="../assets/css/custom.css" />
+  <script>
+    tailwind.config = {
+      theme: { extend: { colors: {
+        primary: { DEFAULT: '#16a34a', dark: '#15803d', light: '#dcfce7' },
+        accent:  { DEFAULT: '#f97316', dark: '#ea580c' }
+      }}}
+    }
+  </script>
+</head>
+<body class="bg-gray-50 font-sans antialiased min-h-screen flex flex-col">
+
+  <div id="navbar"></div>
+
+  <div class="bg-white border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-center justify-between">
+      <div>
+        <h1 class="text-2xl font-extrabold text-gray-900">Produk Saya</h1>
+        <p id="product-count-label" class="text-sm text-gray-500 mt-0.5">Memuat...</p>
+      </div>
+      <button id="btn-add-product"
+        class="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white font-semibold px-5 py-2.5 rounded-xl text-sm transition-colors shadow-sm">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+        </svg>
+        Tambah Produk
+      </button>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1">
+
+    <!-- Toolbar -->
+    <div class="flex flex-col sm:flex-row gap-3 mb-6">
+      <div class="relative flex-1">
+        <svg class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <input id="search-product" type="text" placeholder="Cari produk..."
+          class="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:border-green-500 transition-colors" />
+      </div>
+      <select id="filter-category"
+        class="px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:border-green-500 transition-colors">
+        <option value="">Semua Kategori</option>
+        <option value="makanan">🍱 Makanan</option>
+        <option value="minuman">🥤 Minuman</option>
+        <option value="kerajinan">👜 Kerajinan Tangan</option>
+        <option value="fashion">👗 Fashion & Pakaian</option>
+        <option value="elektronik">📱 Elektronik</option>
+        <option value="pertanian">🌱 Pertanian & Kebun</option>
+        <option value="aksesoris">💍 Aksesoris</option>
+        <option value="kesehatan">🌿 Kesehatan</option>
+        <option value="furnitur">🪑 Furnitur</option>
+        <option value="lainnya">🎁 Lainnya</option>
+      </select>
+      <select id="filter-stock"
+        class="px-4 py-2.5 border border-gray-200 rounded-xl text-sm bg-white focus:border-green-500 transition-colors">
+        <option value="">Semua Stok</option>
+        <option value="low">Stok Menipis (&lt;5)</option>
+        <option value="empty">Habis (0)</option>
+      </select>
+    </div>
+
+    <!-- Loading -->
+    <div id="products-loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      <div class="bg-white rounded-2xl h-72 animate-pulse border border-gray-100"></div>
+      <div class="bg-white rounded-2xl h-72 animate-pulse border border-gray-100"></div>
+      <div class="bg-white rounded-2xl h-72 animate-pulse border border-gray-100"></div>
+      <div class="bg-white rounded-2xl h-72 animate-pulse border border-gray-100"></div>
+    </div>
+
+    <!-- Empty -->
+    <div id="products-empty" class="hidden flex flex-col items-center py-32 gap-4 text-gray-400">
+      <span class="text-7xl">📦</span>
+      <p class="text-xl font-bold text-gray-600">Belum ada produk</p>
+      <p class="text-sm">Tambahkan produk pertamamu sekarang!</p>
+      <button onclick="openModal()" class="mt-2 bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 rounded-xl transition-colors">
+        Tambah Produk
+      </button>
+    </div>
+
+    <!-- Grid -->
+    <div id="products-grid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"></div>
+  </div>
+
+  <!-- ===== MODAL ADD/EDIT ===== -->
+  <div id="modal-product" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm" id="modal-backdrop"></div>
+    <div class="relative bg-white rounded-3xl shadow-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto">
+
+      <div class="sticky top-0 bg-white rounded-t-3xl border-b border-gray-100 px-6 py-4 flex items-center justify-between z-10">
+        <h2 id="modal-title" class="font-bold text-gray-900 text-lg">Tambah Produk</h2>
+        <button id="modal-close"
+          class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-500 transition-colors">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <form id="product-form" class="p-6 space-y-5" novalidate>
+        <input type="hidden" id="edit-id" />
+
+        <!-- Image preview -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Foto Produk</label>
+          <div id="image-preview-area"
+            class="w-full h-44 border-2 border-dashed border-gray-200 rounded-2xl flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-green-400 hover:bg-green-50 transition-colors relative overflow-hidden"
+            onclick="document.getElementById('image-input').click()">
+            <img id="image-preview" class="hidden w-full h-full object-cover absolute inset-0" />
+            <div id="image-placeholder" class="flex flex-col items-center gap-2 text-gray-400">
+              <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+              <p class="text-sm font-medium">Klik untuk upload foto</p>
+              <p class="text-xs">PNG, JPG maksimal 2MB</p>
+            </div>
+          </div>
+          <input type="file" id="image-input" accept="image/*" class="hidden" />
+        </div>
+
+        <!-- Name -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Nama Produk <span class="text-red-500">*</span></label>
+          <input type="text" id="field-name" placeholder="Nama produk yang jelas dan menarik"
+            class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-green-500 transition-colors" required />
+          <p id="name-error" class="hidden mt-1 text-xs text-red-500"></p>
+        </div>
+
+        <!-- Category + Price -->
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Kategori <span class="text-red-500">*</span></label>
+            <select id="field-category"
+              class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-green-500 transition-colors">
+              <option value="">Pilih kategori</option>
+              <option value="makanan">Makanan</option>
+              <option value="minuman">Minuman</option>
+              <option value="kerajinan">Kerajinan Tangan</option>
+              <option value="fashion">Fashion & Pakaian</option>
+              <option value="elektronik">Elektronik</option>
+              <option value="pertanian">Pertanian & Kebun</option>
+              <option value="aksesoris">Aksesoris</option>
+              <option value="kesehatan">Kesehatan</option>
+              <option value="furnitur">Furnitur</option>
+              <option value="lainnya">Lainnya</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Harga (Rp) <span class="text-red-500">*</span></label>
+            <div class="relative">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-gray-400">Rp</span>
+              <input type="number" id="field-price" placeholder="0" min="0"
+                class="w-full pl-8 pr-3 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-green-500 transition-colors" required />
+            </div>
+          </div>
+        </div>
+
+        <!-- Stock -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Stok <span class="text-red-500">*</span></label>
+          <input type="number" id="field-stock" placeholder="Jumlah stok tersedia" min="0"
+            class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-green-500 transition-colors" required />
+        </div>
+
+        <!-- Description -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Deskripsi</label>
+          <textarea id="field-description" rows="4" placeholder="Deskripsikan produkmu: bahan, ukuran, keunggulan..."
+            class="w-full px-4 py-3 border border-gray-200 rounded-xl text-sm bg-gray-50 focus:bg-white focus:border-green-500 transition-colors resize-none"></textarea>
+        </div>
+
+        <!-- Active toggle -->
+        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+          <div>
+            <p class="text-sm font-semibold text-gray-900">Produk Aktif</p>
+            <p class="text-xs text-gray-400 mt-0.5">Produk aktif akan tampil di katalog publik</p>
+          </div>
+          <button type="button" id="toggle-active" data-active="true"
+            class="relative w-12 h-6 bg-green-600 rounded-full transition-colors focus:outline-none">
+            <div id="toggle-knob" class="absolute right-1 top-1 w-4 h-4 bg-white rounded-full shadow transition-transform"></div>
+          </button>
+        </div>
+
+        <!-- Error -->
+        <div id="form-error" class="hidden flex items-start gap-2 bg-red-50 border border-red-100 text-red-600 rounded-xl px-4 py-3 text-sm">
+          <svg class="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <span id="form-error-msg"></span>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex gap-3 pt-2">
+          <button type="button" id="btn-cancel"
+            class="flex-1 py-3 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">
+            Batal
+          </button>
+          <button type="submit" id="btn-save"
+            class="flex-1 py-3 bg-green-600 hover:bg-green-700 rounded-xl text-sm font-semibold text-white transition-colors flex items-center justify-center gap-2">
+            <span id="save-text">Simpan Produk</span>
+            <svg id="save-spinner" class="hidden w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+            </svg>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Confirm delete modal -->
+  <div id="modal-delete" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+    <div class="relative bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 text-center space-y-4">
+      <div class="w-14 h-14 bg-red-100 rounded-2xl flex items-center justify-center mx-auto">
+        <svg class="w-7 h-7 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+        </svg>
+      </div>
+      <div>
+        <h3 class="font-bold text-gray-900">Hapus Produk?</h3>
+        <p id="delete-product-name" class="text-sm text-gray-500 mt-1"></p>
+      </div>
+      <div class="flex gap-3">
+        <button id="delete-cancel" class="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors">Batal</button>
+        <button id="delete-confirm" class="flex-1 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-sm font-semibold text-white transition-colors">Hapus</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="footer"></div>
+
+  <script src="../assets/js/api.js"></script>
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/utils.js"></script>
+  <script>
+    utils.injectNavbar('products');
+    utils.injectFooter();
+    auth.requireAuth(['seller', 'admin']);
+
+    const DEMO_EMOJIS = { makanan:'🍱', kerajinan:'👜', fashion:'👗', elektronik:'📱', pertanian:'🌿', lainnya:'🎁' };
+    let allProducts = [];
+    let pendingDeleteId = null;
+    let isActive = true;
+
+    const DEMO_PRODUCTS = [
+      { id:1, name:'Kue Nastar Spesial', price:45000, category:'makanan', stock:50, is_active:true, image_url:null, description:'Nastar premium isian nanas asli.' },
+      { id:2, name:'Tas Anyaman Bambu', price:120000, category:'kerajinan', stock:15, is_active:true, image_url:null, description:'Tas handmade dari bambu pilihan.' },
+      { id:3, name:'Teh Herbal Organik', price:35000, category:'pertanian', stock:100, is_active:true, image_url:null, description:'Teh herbal tanpa pestisida.' },
+      { id:4, name:'Batik Tulis Solo', price:285000, category:'fashion', stock:3, is_active:true, image_url:null, description:'Batik tulis tangan motif klasik.' },
+      { id:5, name:'Coklat Edamame', price:55000, category:'makanan', stock:30, is_active:false, image_url:null, description:'Coklat rasa edamame unik.' },
+      { id:6, name:'Gerabah Dekoratif', price:95000, category:'kerajinan', stock:2, is_active:true, image_url:null, description:'Gerabah dekoratif buatan tangan.' },
+    ];
+
+    // ── Load products ──────────────────────────────────
+    async function loadProducts() {
+      try {
+        const res = await api.get('/seller/products');
+        allProducts = res.data?.data || res.data || [];
+        if (!allProducts.length) allProducts = DEMO_PRODUCTS;
+      } catch (_) {
+        allProducts = DEMO_PRODUCTS;
+      }
+      filterAndRender();
+    }
+
+    function filterAndRender() {
+      const search = document.getElementById('search-product').value.toLowerCase();
+      const cat    = document.getElementById('filter-category').value;
+      const stock  = document.getElementById('filter-stock').value;
+
+      let list = allProducts.filter(p => {
+        if (search && !p.name.toLowerCase().includes(search)) return false;
+        if (cat && p.category !== cat) return false;
+        if (stock === 'low' && p.stock >= 5) return false;
+        if (stock === 'empty' && p.stock !== 0) return false;
+        return true;
+      });
+
+      document.getElementById('products-loading').classList.add('hidden');
+      document.getElementById('product-count-label').textContent =
+        `${allProducts.length} produk terdaftar · ${list.length} ditampilkan`;
+
+      if (!list.length) {
+        document.getElementById('products-empty').classList.remove('hidden');
+        document.getElementById('products-grid').classList.add('hidden');
+        return;
+      }
+
+      document.getElementById('products-empty').classList.add('hidden');
+      document.getElementById('products-grid').classList.remove('hidden');
+
+      document.getElementById('products-grid').innerHTML = list.map(p => {
+        const stockColor = p.stock === 0 ? 'text-red-500' : p.stock < 5 ? 'text-orange-500' : 'text-gray-700';
+        const stockLabel = p.stock === 0 ? 'Habis' : p.stock < 5 ? `${p.stock} (Menipis)` : p.stock;
+        return `
+          <div class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden hover:shadow-md transition-shadow group">
+            <!-- Image -->
+            <div class="aspect-video bg-gradient-to-br from-green-50 to-emerald-100 relative overflow-hidden flex items-center justify-center text-5xl">
+              ${p.image_url
+                ? `<img src="${utils.getProductImageUrl(p.image_url)}" alt="${p.name}"
+                        class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+                : ''
+              }
+              <span class="${p.image_url ? 'hidden' : ''}">${DEMO_EMOJIS[p.category]||'📦'}</span>
+              <!-- Active badge -->
+              <div class="absolute top-2 right-2">
+                <span class="text-xs font-bold px-2 py-1 rounded-full ${p.is_active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}">
+                  ${p.is_active ? 'Aktif' : 'Nonaktif'}
+                </span>
+              </div>
+              ${p.stock === 0 ? '<div class="absolute inset-0 bg-black/40 flex items-center justify-center"><span class="text-white font-bold text-sm">HABIS</span></div>' : ''}
+            </div>
+
+            <!-- Info -->
+            <div class="p-4">
+              <p class="text-xs text-gray-400 mb-1">${utils.getCategoryLabel(p.category)}</p>
+              <h3 class="font-bold text-gray-900 text-sm leading-snug mb-2 line-clamp-1">${p.name}</h3>
+              <div class="flex items-center justify-between mb-4">
+                <span class="text-green-600 font-extrabold">${utils.formatRupiah(p.price)}</span>
+                <span class="text-xs font-semibold ${stockColor}">Stok: ${stockLabel}</span>
+              </div>
+
+              <!-- Stock bar -->
+              <div class="w-full bg-gray-100 rounded-full h-1.5 mb-4">
+                <div class="h-1.5 rounded-full transition-all ${p.stock === 0 ? 'bg-red-500' : p.stock < 5 ? 'bg-orange-400' : 'bg-green-500'}"
+                     style="width: ${Math.min(100, (p.stock / 50) * 100)}%"></div>
+              </div>
+
+              <!-- Actions -->
+              <div class="flex gap-2">
+                <button onclick="openEditModal(${p.id})"
+                  class="flex-1 flex items-center justify-center gap-1.5 py-2 border border-gray-200 rounded-xl text-xs font-semibold text-gray-700 hover:bg-gray-50 hover:border-green-300 transition-colors">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                  </svg>
+                  Edit
+                </button>
+                <button onclick="confirmDelete(${p.id}, '${p.name.replace(/'/g,"\\'")}') "
+                  class="w-9 h-9 flex items-center justify-center border border-gray-200 rounded-xl text-gray-400 hover:bg-red-50 hover:border-red-200 hover:text-red-500 transition-colors">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ── Modal ──────────────────────────────────────────
+    function openModal(product = null) {
+      const form = document.getElementById('product-form');
+      form.reset();
+      document.getElementById('edit-id').value = '';
+      document.getElementById('modal-title').textContent = 'Tambah Produk';
+      document.getElementById('save-text').textContent = 'Simpan Produk';
+      document.getElementById('form-error').classList.add('hidden');
+      document.getElementById('image-preview').classList.add('hidden');
+      document.getElementById('image-placeholder').classList.remove('hidden');
+      setActiveToggle(true);
+
+      if (product) {
+        document.getElementById('modal-title').textContent = 'Edit Produk';
+        document.getElementById('save-text').textContent = 'Perbarui Produk';
+        document.getElementById('edit-id').value = product.id;
+        document.getElementById('field-name').value = product.name;
+        document.getElementById('field-category').value = (product.category || '').toLowerCase();
+        document.getElementById('field-price').value = product.price;
+        document.getElementById('field-stock').value = product.stock;
+        document.getElementById('field-description').value = product.description || '';
+        setActiveToggle(product.is_active);
+
+        if (product.image_url) {
+          const preview = document.getElementById('image-preview');
+          preview.src = utils.getProductImageUrl(product.image_url);
+          preview.classList.remove('hidden');
+          document.getElementById('image-placeholder').classList.add('hidden');
+        }
+      }
+
+      document.getElementById('modal-product').classList.remove('hidden');
+    }
+
+    function openEditModal(productId) {
+      const p = allProducts.find(p => p.id === productId);
+      if (p) openModal(p);
+    }
+
+    function setActiveToggle(active) {
+      isActive = active;
+      const btn  = document.getElementById('toggle-active');
+      const knob = document.getElementById('toggle-knob');
+      btn.dataset.active = active ? 'true' : 'false';
+      btn.className = `relative w-12 h-6 rounded-full transition-colors focus:outline-none ${active ? 'bg-green-600' : 'bg-gray-300'}`;
+      knob.className = `absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform ${active ? 'right-1' : 'left-1'}`;
+    }
+
+    document.getElementById('toggle-active').addEventListener('click', () => {
+      setActiveToggle(!isActive);
+    });
+
+    // Image preview
+    document.getElementById('image-input').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      if (file.size > 2 * 1024 * 1024) {
+        utils.showToast('Ukuran file melebihi 2MB', 'error'); return;
+      }
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const preview = document.getElementById('image-preview');
+        preview.src = ev.target.result;
+        preview.classList.remove('hidden');
+        document.getElementById('image-placeholder').classList.add('hidden');
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Close modal
+    const closeModal = () => document.getElementById('modal-product').classList.add('hidden');
+    document.getElementById('modal-close').addEventListener('click', closeModal);
+    document.getElementById('btn-cancel').addEventListener('click', closeModal);
+    document.getElementById('modal-backdrop').addEventListener('click', closeModal);
+    document.getElementById('btn-add-product').addEventListener('click', () => openModal());
+
+    // Save product
+    document.getElementById('product-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errEl  = document.getElementById('form-error');
+      const errMsg = document.getElementById('form-error-msg');
+      const spinner = document.getElementById('save-spinner');
+      const saveText = document.getElementById('save-text');
+      const saveBtn  = document.getElementById('btn-save');
+      errEl.classList.add('hidden');
+
+      const name        = document.getElementById('field-name').value.trim();
+      const category    = document.getElementById('field-category').value;
+      const price       = parseInt(document.getElementById('field-price').value);
+      const stock       = parseInt(document.getElementById('field-stock').value);
+      const description = document.getElementById('field-description').value.trim();
+      const editId      = document.getElementById('edit-id').value;
+
+      if (!name)     { errMsg.textContent = 'Nama produk wajib diisi.';  errEl.classList.remove('hidden'); return; }
+      if (!category) { errMsg.textContent = 'Kategori wajib dipilih.';   errEl.classList.remove('hidden'); return; }
+      if (!price || price <= 0) { errMsg.textContent = 'Harga harus lebih dari 0.'; errEl.classList.remove('hidden'); return; }
+      if (stock === undefined || isNaN(stock) || stock < 0) { errMsg.textContent = 'Stok tidak valid.'; errEl.classList.remove('hidden'); return; }
+
+      saveBtn.disabled = true;
+      saveText.textContent = 'Menyimpan...';
+      spinner.classList.remove('hidden');
+
+      const payload = { name, category, price, stock, description, is_active: isActive };
+
+      try {
+        let res;
+        if (editId) {
+          res = await api.put(`/seller/products/${editId}`, payload);
+        } else {
+          res = await api.post('/seller/products', payload);
+        }
+
+        if (res?.success || res?.data) {
+          utils.showToast(editId ? 'Produk berhasil diperbarui!' : 'Produk berhasil ditambahkan!', 'success');
+          closeModal();
+          loadProducts();
+        } else {
+          utils.showToast(res.message || 'Gagal menyimpan produk', 'error');
+        }
+      } catch (_) {
+        utils.showToast('Gagal menyimpan produk. Coba lagi.', 'error');
+      } finally {
+        saveBtn.disabled = false;
+        saveText.textContent = editId ? 'Perbarui Produk' : 'Simpan Produk';
+        spinner.classList.add('hidden');
+      }
+    });
+
+    // Delete
+    function confirmDelete(id, name) {
+      pendingDeleteId = id;
+      document.getElementById('delete-product-name').textContent = `"${name}" akan dihapus permanen.`;
+      document.getElementById('modal-delete').classList.remove('hidden');
+    }
+
+    document.getElementById('delete-cancel').addEventListener('click', () => {
+      document.getElementById('modal-delete').classList.add('hidden');
+    });
+
+    document.getElementById('delete-confirm').addEventListener('click', async () => {
+      document.getElementById('modal-delete').classList.add('hidden');
+      if (!pendingDeleteId) return;
+      try {
+        await api.delete(`/seller/products/${pendingDeleteId}`);
+      } catch (_) {}
+      allProducts = allProducts.filter(p => p.id !== pendingDeleteId);
+      utils.showToast('Produk berhasil dihapus', 'success');
+      pendingDeleteId = null;
+      filterAndRender();
+    });
+
+    // Filters
+    let searchTimer;
+    document.getElementById('search-product').addEventListener('input', () => {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(filterAndRender, 300);
+    });
+    document.getElementById('filter-category').addEventListener('change', filterAndRender);
+    document.getElementById('filter-stock').addEventListener('change', filterAndRender);
+
+    loadProducts();
+  </script>
+</body>
+</html>
