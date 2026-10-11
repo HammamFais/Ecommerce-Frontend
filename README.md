@@ -45,7 +45,7 @@
 | Payment | Midtrans Snap (Sandbox) |
 | Ongkir | RajaOngkir API V2 |
 | Deploy | Vercel |
-| Backend | Laravel (Railway) |
+| Backend | Laravel ([Vercel](https://pasarlokal-api.vercel.app)) |
 
 ---
 
